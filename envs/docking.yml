@@ -5,7 +5,7 @@ channels:
   - defaults
 dependencies:
   - python=3.11
-  - autodock-vina>=1.2.3          # 1.2.5 não existe no bioconda; 1.2.3 é a versão estável atual
+  - vina>=1.2.3                    # conda-forge: pacote correto é 'vina', não 'autodock-vina'
   - biopython=1.83
   - pandas=2.2.0
   - numpy=1.26.4
