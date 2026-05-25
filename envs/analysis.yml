@@ -1,0 +1,18 @@
+name: analysis
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - python=3.11
+  - matplotlib=3.8.4
+  - seaborn=0.13.2
+  - pandas=2.2.0
+  - numpy=1.26.4
+  - scipy=1.13.0
+  - biopython=1.83
+  - pymol-open-source=3.0.0
+  - jupyter=1.0.0
+  - ipykernel=6.29.3
+  - plotly=5.20.0
+  - kaleido=0.2.1  # para exportar plotly como SVG/PDF

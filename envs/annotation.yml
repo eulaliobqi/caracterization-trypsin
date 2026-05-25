@@ -1,0 +1,17 @@
+name: annotation
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - python=3.11
+  - diamond=2.1.9
+  - hmmer=3.4
+  - biopython=1.83
+  - pandas=2.2.0
+  - numpy=1.26.4
+  - seqkit=2.8.2
+  # InterProScan: instalar separadamente (não disponível no bioconda)
+  # Download: https://ftp.ebi.ac.uk/pub/software/unix/iprscan/5/
+  # SignalP 6: instalar via pip após obter licença acadêmica
+  # pip install signalp6

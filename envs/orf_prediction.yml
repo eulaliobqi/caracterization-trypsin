@@ -1,0 +1,13 @@
+name: orf_prediction
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - python=3.11
+  - transdecoder=5.7.1
+  - hmmer=3.4
+  - blast=2.15.0
+  - diamond=2.1.9
+  - biopython=1.83
+  - pandas=2.2.0

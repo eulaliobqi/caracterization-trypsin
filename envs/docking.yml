@@ -1,0 +1,22 @@
+name: docking
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - python=3.11
+  - autodock-vina=1.2.5
+  - biopython=1.83
+  - pandas=2.2.0
+  - numpy=1.26.4
+  - scipy=1.13.0
+  - openbabel=3.1.1
+  - rdkit=2024.03.5
+  - pip
+  - pip:
+    # HADDOCK 3: instalar separadamente
+    # git clone https://github.com/haddocking/haddock3
+    # pip install -e haddock3/
+    - haddock3
+    # PLIP para análise de interações protein-ligand
+    - plip>=2.3.0

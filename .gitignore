@@ -1,0 +1,51 @@
+# Nextflow
+work/
+.nextflow/
+.nextflow.log*
+results_stub/
+timeline.html
+report.html
+trace.txt
+dag.svg
+
+# Large data files
+data/raw/*.fasta
+data/raw/*.fa
+data/references/
+data/intermediate/
+
+# Results (keep structure, not data)
+results/**/*
+!results/**/.gitkeep
+
+# Conda environments (local)
+.conda/
+envs/*/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+.pytest_cache/
+.venv/
+
+# Editors
+.vscode/
+.idea/
+*.swp
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Secrets
+.env
+*.key
+*.pem
+secrets/
+
+# Logs
+*.log
+logs/

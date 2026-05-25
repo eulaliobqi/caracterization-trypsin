@@ -1,0 +1,24 @@
+name: structure
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - python=3.11
+  - biopython=1.83
+  - foldseek=9.427df8a
+  - tmalign=20220412
+  - dssp=4.4.6
+  - pymol-open-source=3.0.0
+  - pandas=2.2.0
+  - numpy=1.26.4
+  - scipy=1.13.0
+  - matplotlib=3.8.4
+  - pip
+  - pip:
+    # AlphaFold3: requer instalação manual do repositório Google DeepMind
+    # git clone https://github.com/google-deepmind/alphafold3
+    # pip install -e alphafold3/
+    - alphafold3  # tentativa via pip
+    # Colabfold como alternativa (AF2-based)
+    # - colabfold[alphafold]

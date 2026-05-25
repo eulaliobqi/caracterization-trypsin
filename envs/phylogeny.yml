@@ -1,0 +1,13 @@
+name: phylogeny
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - python=3.11
+  - mafft=7.520
+  - trimal=1.4.1
+  - iqtree=2.3.6
+  - biopython=1.83
+  - pandas=2.2.0
+  - numpy=1.26.4
