@@ -5,9 +5,12 @@ channels:
   - defaults
 dependencies:
   - python=3.11
-  - mafft=7.520
+  - mafft>=7.515                   # 7.520 causava conflito de canal; >=7.515 resolve (instala 7.526)
   - trimal=1.4.1
-  - iqtree=2.3.6
+  - iqtree>=2.2.0                  # 2.3.6 pode não existir no bioconda; >=2.2 é suficiente
   - biopython=1.83
   - pandas=2.2.0
   - numpy=1.26.4
+  - ete3>=3.1.3                    # visualização de árvores filogenéticas
+  - matplotlib=3.8.4
+  - seaborn=0.13.2
