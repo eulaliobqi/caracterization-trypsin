@@ -15,11 +15,15 @@ set -euo pipefail
 echo "=== Pós-instalação: ambiente docking ==="
 
 # Verificar que o ambiente existe
-if ! mamba env list | grep -q '^docking '; then
-    echo "ERRO: ambiente 'docking' não encontrado. Rode primeiro:"
+# 'mamba env list' pode usar tabs ou espaços; checar pelo path do env é mais robusto
+CONDA_BASE=$(conda info --base 2>/dev/null || mamba info --base 2>/dev/null || echo "$HOME/miniforge3")
+DOCKING_ENV_PATH="${CONDA_BASE}/envs/docking"
+if [ ! -d "$DOCKING_ENV_PATH" ]; then
+    echo "ERRO: ambiente 'docking' não encontrado em $DOCKING_ENV_PATH. Rode primeiro:"
     echo "  mamba env create -f envs/docking.yml --yes"
     exit 1
 fi
+echo "Ambiente docking encontrado em: $DOCKING_ENV_PATH"
 
 # meeko: instalar sem recompilar openbabel (já presente via conda)
 echo "[1/3] Instalando meeko (--no-deps)..."
