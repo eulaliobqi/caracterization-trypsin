@@ -4,16 +4,16 @@ channels:
   - bioconda
   - defaults
 dependencies:
-  - python=3.11
-  - biopython=1.83
+  - python=3.12                    # AlphaFold3 exige >=3.12; 3.11 causava "requires Python>=3.12"
+  - biopython>=1.83
   - foldseek>=9                    # '9.427df8a' é hash de build, não versão; use >=9
   - tmalign                        # versão '20220412' é data de release; sem pin = instala disponível
   - dssp>=4.0                      # 4.4.6 pode não existir; >=4.0 instala versão mais recente
   - pymol-open-source>=2.6         # 3.0.0 pode não estar no canal; >=2.6 é estável
-  - pandas=2.2.0
-  - numpy=1.26.4
-  - scipy=1.13.0
-  - matplotlib=3.8.4
+  - pandas>=2.2.0
+  - numpy>=1.26.4
+  - scipy>=1.13.0
+  - matplotlib>=3.8.4
   - pip
   - pip:
     # AlphaFold3 requer instalação manual (Google DeepMind):
