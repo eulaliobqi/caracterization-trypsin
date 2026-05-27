@@ -68,12 +68,9 @@ def helpMsg() {
     """.stripIndent()
 }
 
-if (params.help) {
-    helpMsg()
-    exit 0
-}
-
 // ── Validação de inputs ───────────────────────────────────────────────────
+// Nextflow 26.x: statements soltos (if, chamadas de função) fora de
+// workflow/process/function são inválidos — movidos para dentro do workflow.
 def validateParams() {
     // Verificar FASTA de input
     if (!file(params.input_fasta).exists()) {
@@ -87,10 +84,16 @@ def validateParams() {
         log.warn "   Baixe e crie com: diamond makedb --in uniprot_sprot.fasta -d uniprot_sprot"
     }
 }
-validateParams()
 
 // ── Workflow principal ────────────────────────────────────────────────────
 workflow {
+
+    // Nextflow 26.x: help e validação dentro do workflow
+    if (params.help) {
+        helpMsg()
+        exit 0
+    }
+    validateParams()
 
     // Log de início
     log.info """
