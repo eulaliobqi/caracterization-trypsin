@@ -16,11 +16,15 @@ LOGS_DIR="${PROJ_ROOT}/logs"
 # ── Input principal ───────────────────────────────────────────────────────────
 ASSEMBLY="${RAW_DIR}/trinity_assembly.fasta"
 
-# ── Referências (baixar separadamente — ver README.md) ────────────────────────
-UNIPROT_DB="${REFS_DIR}/uniprot_sprot.dmnd"     # diamond makedb
-PFAM_HMM="${REFS_DIR}/Pfam-A.hmm"               # hmmpress antes de usar
-BUSCO_LINEAGE="insecta_odb10"                   # baixado automaticamente pelo BUSCO
-BOVINE_TRYPSIN="${REFS_DIR}/bovine_trypsin_1TGN.fasta"  # para alinhamento da tríade
+# ── Referências (bancos de dados no servidor) ─────────────────────────────────
+PROTEIN_DB="/home/eulalio/databases/nr/nr.dmnd"          # NCBI NR (DIAMOND)
+UNIPROT_DB="$PROTEIN_DB"                                  # alias para compatibilidade
+PFAM_HMM="/home/eulalio/databases/pfam/Pfam-A.hmm"       # já pressionado (h3f/h3i/h3m/h3p)
+EGGNOG_DB="/home/eulalio/databases/eggnog/eggnog.db"      # EggNOG (Fase 5)
+EGGNOG_PROTEINS="/home/eulalio/databases/eggnog/eggnog_proteins.dmnd"
+TAXDUMP_DIR="/home/eulalio/databases/taxdump"
+BUSCO_LINEAGE="insecta_odb10"                             # baixado automaticamente pelo BUSCO
+BOVINE_TRYPSIN="${REFS_DIR}/bovine_trypsin_1TGN.fasta"    # para alinhamento da tríade
 TRYP_REFS="${REFS_DIR}/trypsin_refs_lepidoptera.fasta"
 
 # ── Parâmetros de qualidade ───────────────────────────────────────────────────
