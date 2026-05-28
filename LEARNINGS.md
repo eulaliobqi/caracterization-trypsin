@@ -51,6 +51,13 @@
   - Brioschi et al. 2007 *Insect Biochem Mol Biol* (tripsinas A. gemmatalis)
   - Brito et al. 2001 *J Insect Physiol* (interação com SKTI)
 
+## ERRO-001 [2026-05-28] mamba run incompatível com bash no servidor Debian
+- **Sintoma:** `mamba run -n ENV cmd` falha com `exec: --: invalid option`
+- **Causa raiz:** mamba gera script temporário com `exec -- cmd`; bash builtin exec não aceita `--`
+- **Workaround tentado:** `conda activate`, PATH injection, subshell+exec — todos falharam para Perl scripts (TransDecoder) por shebang quebrado no env isolado
+- **Solução definitiva:** instalar todas as ferramentas diretamente no ambiente base (`mamba install -n base pkg`). mamba_run e check_env viram no-ops em config.sh.
+- **Prevenção:** neste servidor, NÃO usar envs conda isolados — instalar tudo no base
+
 ## INS-002 [2026-05-25] Assembly Trinity — características
 - Input: 42.372 transcritos (assembly transcriptômico do midgut larval)
 - Formato TRINITY_DN*_c*_g*_i* — múltiplas isoformas por gene
