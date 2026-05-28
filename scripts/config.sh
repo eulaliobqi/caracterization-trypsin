@@ -45,19 +45,18 @@ ENV_STRUCTURE="structure"  # Fase 7-8
 ENV_DOCKING="docking"      # Fase 9
 
 # ── Execução em ambiente conda ───────────────────────────────────────────────
-# mamba run gera exec -- que bash não aceita; usamos conda activate direto
-_conda_base="$(conda info --base 2>/dev/null || echo "${HOME}/miniforge3")"
-# shellcheck disable=SC1091
-[ -f "${_conda_base}/etc/profile.d/conda.sh" ]  && source "${_conda_base}/etc/profile.d/conda.sh"
-[ -f "${_conda_base}/etc/profile.d/mamba.sh" ]  && source "${_conda_base}/etc/profile.d/mamba.sh"
+# Injeta bin/ do env no PATH — evita mamba run (gera exec -- incompatível com bash)
+# e conda activate (não funciona em contexto não-interativo dentro de função).
+_CONDA_BASE="$(conda info --base 2>/dev/null || echo "${HOME}/miniforge3")"
 
 mamba_run() {
     local env="$1"; shift
-    conda activate "$env"
-    "$@"
-    local rc=$?
-    conda deactivate
-    return $rc
+    local env_bin="${_CONDA_BASE}/envs/${env}/bin"
+    if [ ! -d "$env_bin" ]; then
+        echo "❌ ERRO: ambiente conda '${env}' não encontrado em ${env_bin}"
+        return 1
+    fi
+    PATH="${env_bin}:${PATH}" "$@"
 }
 MAMBA_RUN="mamba_run"
 
