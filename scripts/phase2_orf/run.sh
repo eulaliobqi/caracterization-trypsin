@@ -1,23 +1,31 @@
 #!/usr/bin/env bash
 # =============================================================================
 # FASE 2 — Predição de ORFs
-# Ferramenta: TransDecoder (+ hints BLAST e HMMER/Pfam opcionais)
+# Ferramenta: TransDecoder (+ hints DIAMOND e HMMER/Pfam opcionais)
 #
 # Input:  results/phase1/assembly_nr95.fasta
 # Output: results/phase2/
 #   - agemmatalis.pep            → todas as proteínas preditas
 #   - agemmatalis.cds            → CDSs correspondentes
 #   - agemmatalis.gff3           → coordenadas no transcriptoma
-#   - blast_hints.outfmt6        → hits BLAST (se UniProt disponível)
+#   - blast_hints.outfmt6        → hits DIAMOND (se PROTEIN_DB disponível)
 #   - pfam_hints.domtblout       → hits Pfam (se Pfam-A.hmm disponível)
 #   - phase2_summary.txt         → resumo executivo
-#
-# Nota: BLAST e HMMER hints são opcionais mas melhoram a predição.
-#       Se os DBs não existirem, TransDecoder roda sem hints.
 # =============================================================================
 
-set -euo pipefail
+# ── Ativar ambiente conda ANTES do set -euo pipefail ─────────────────────────
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+_CB="$(conda info --base 2>/dev/null || echo "${HOME}/miniforge3")"
+# shellcheck disable=SC1091
+source "${_CB}/etc/profile.d/conda.sh"  2>/dev/null || true
+source "${_CB}/etc/profile.d/mamba.sh"  2>/dev/null || true
+if ! conda activate orf_prediction 2>/dev/null; then
+    echo "❌ Ambiente 'orf_prediction' não encontrado."
+    echo "   Crie com: mamba env create -f envs/orf_prediction.yml -y"
+    exit 1
+fi
+
+set -euo pipefail
 source "${SCRIPT_DIR}/../config.sh"
 
 while [[ $# -gt 0 ]]; do
@@ -66,7 +74,7 @@ TRANSDECODER_DIR="${OUT}/${FASTA_BASE}.transdecoder_dir"
 if [ -d "$TRANSDECODER_DIR" ]; then
     echo "⏩ LongOrfs já executado — pulando."
 else
-    ${MAMBA_RUN} ${ENV_DISCOVERY} TransDecoder.LongOrfs \
+    TransDecoder.LongOrfs \
         -t "$FASTA_BASE" \
         -m "${MIN_ORF_AA}" \
         2>&1
@@ -91,7 +99,7 @@ if [ -f "${UNIPROT_DB}" ]; then
         echo "⏩ BLAST hints já existem — pulando."
     else
         echo "Rodando DIAMOND blastp para hints..."
-        ${MAMBA_RUN} ${ENV_DISCOVERY} diamond blastp \
+        diamond blastp \
             -q "$LONGEST_ORFS" \
             -d "${UNIPROT_DB}" \
             -p "${CPUS}" \
@@ -125,14 +133,14 @@ if [ -f "${PFAM_HMM}" ] || [ -f "${PFAM_HMM}.h3f" ]; then
     # Pressionar o banco se necessário
     if [ ! -f "${PFAM_HMM}.h3f" ]; then
         echo "Preparando banco Pfam (hmmpress)..."
-        ${MAMBA_RUN} ${ENV_DISCOVERY} hmmpress "${PFAM_HMM}"
+        hmmpress "${PFAM_HMM}"
     fi
 
     if [ -f "$PFAM_HINTS" ]; then
         echo "⏩ Pfam hints já existem — pulando."
     else
         echo "Rodando hmmscan contra Pfam-A (pode demorar 1-2h)..."
-        ${MAMBA_RUN} ${ENV_DISCOVERY} hmmscan \
+        hmmscan \
             --cpu "${CPUS}" \
             --domtblout "$PFAM_HINTS" \
             --noali \
@@ -160,7 +168,7 @@ PEP_OUT="${OUT}/agemmatalis.pep"
 if [ -f "$PEP_OUT" ]; then
     echo "⏩ TransDecoder.Predict já executado — pulando."
 else
-    ${MAMBA_RUN} ${ENV_DISCOVERY} TransDecoder.Predict \
+    TransDecoder.Predict \
         -t "$FASTA_BASE" \
         ${USE_BLAST_HINTS} \
         ${USE_PFAM_HINTS} \

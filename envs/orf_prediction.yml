@@ -1,13 +1,15 @@
 name: orf_prediction
+# Ambiente para Fase 2 (TransDecoder) e Fase 3 (DIAMOND + HMMER)
 channels:
-  - conda-forge
   - bioconda
+  - conda-forge
   - defaults
 dependencies:
-  - python=3.11
+  - perl=5.32
+  - perl-db-file
   - transdecoder=5.7.1
   - hmmer=3.4
-  - blast=2.15.0
   - diamond=2.1.9
+  - python=3.11
   - biopython=1.83
   - pandas=2.2.0
