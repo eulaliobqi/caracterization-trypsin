@@ -125,13 +125,14 @@ def main():
         checks.append(("BUSCO completeness", f"{pct:.1f}%", status))
 
     # ── 2. CD-HIT ─────────────────────────────────────────────────────
-    nr_fasta = results_dir / "assembly_nr95.fasta"
-    if not nr_fasta.exists():
-        errors.append("assembly_nr95.fasta não encontrado — execute run.sh primeiro")
+    nr_fasta = next(results_dir.glob("assembly_nr*.fasta"), None)
+    if nr_fasta is None:
+        errors.append("assembly_nr*.fasta não encontrado — execute run.sh primeiro")
         checks.append(("CD-HIT output", "N/A", "❌ FALTANDO"))
     else:
         n_nr = count_fasta_seqs(nr_fasta)
-        print(f"\nCD-HIT-EST (95% identidade):")
+        identity = nr_fasta.stem.replace("assembly_nr", "")
+        print(f"\nCD-HIT-EST ({identity}% identidade):")
         print(f"  Sequências após clusterização: {n_nr:,}")
 
         if n_nr < MIN_SEQS:

@@ -30,7 +30,7 @@ MIN_ORF_AA=100             # mínimo de aa para TransDecoder.LongOrfs
 DIAMOND_EVALUE="1e-10"     # e-value para DIAMOND vs UniProt
 HMMER_EVALUE="1e-10"       # e-value para HMMER vs PF00089
 MIN_TRYPSIN_AA=220         # comprimento mínimo de tripsina completa
-CDHIT_IDENTITY=0.95        # identidade para CD-HIT-EST (Fase 1)
+CDHIT_IDENTITY=0.98        # identidade para CD-HIT-EST (Fase 1)
 PFAM_COVERAGE=0.80         # cobertura mínima do domínio PF00089
 
 # ── Ambientes conda ───────────────────────────────────────────────────────────

@@ -89,7 +89,8 @@ fi
 # ═══════════════════════════════════════════════════════════════════════
 log_step "1B: CD-HIT-EST (c=${CDHIT_IDENTITY})"
 
-NR_FASTA="${OUT}/assembly_nr95.fasta"
+CDHIT_PCT=$(echo "$CDHIT_IDENTITY * 100 / 1" | bc)
+NR_FASTA="${OUT}/assembly_nr${CDHIT_PCT}.fasta"
 
 if [ -f "$NR_FASTA" ]; then
     echo "⏩ CD-HIT-EST já executado — pulando. Delete ${NR_FASTA} para refazer."
