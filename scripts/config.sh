@@ -51,12 +51,13 @@ _CONDA_BASE="$(conda info --base 2>/dev/null || echo "${HOME}/miniforge3")"
 
 mamba_run() {
     local env="$1"; shift
+    local cmd="$1"; shift
     local env_bin="${_CONDA_BASE}/envs/${env}/bin"
     if [ ! -d "$env_bin" ]; then
         echo "❌ ERRO: ambiente conda '${env}' não encontrado em ${env_bin}"
         return 1
     fi
-    PATH="${env_bin}:${PATH}" "$@"
+    PATH="${env_bin}:${PATH}" "${env_bin}/${cmd}" "$@"
 }
 MAMBA_RUN="mamba_run"
 
