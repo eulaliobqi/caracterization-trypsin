@@ -44,21 +44,12 @@ ENV_PHYLOGENY="phylogeny"  # Fase 6
 ENV_STRUCTURE="structure"  # Fase 7-8
 ENV_DOCKING="docking"      # Fase 9
 
-# ── Execução em ambiente conda ───────────────────────────────────────────────
-# Injeta bin/ do env no PATH — evita mamba run (gera exec -- incompatível com bash)
-# e conda activate (não funciona em contexto não-interativo dentro de função).
-_CONDA_BASE="$(conda info --base 2>/dev/null || echo "${HOME}/miniforge3")"
-
+# ── Execução de ferramentas ───────────────────────────────────────────────────
+# Ferramentas instaladas diretamente no ambiente base (sem env isolado).
+# mamba_run é mantido como no-op para compatibilidade dos scripts existentes.
 mamba_run() {
-    local env="$1"; shift
-    local env_bin="${_CONDA_BASE}/envs/${env}/bin"
-    local base_bin="${_CONDA_BASE}/bin"
-    if [ ! -d "$env_bin" ]; then
-        echo "❌ ERRO: ambiente conda '${env}' não encontrado em ${env_bin}"
-        return 1
-    fi
-    # Subshell com exec: isola PATH e usa env + base como fallback
-    ( export PATH="${env_bin}:${base_bin}:${PATH}"; exec "$@" )
+    local _env="$1"; shift   # env ignorado — ferramentas estão no base
+    "$@"
 }
 MAMBA_RUN="mamba_run"
 
@@ -83,14 +74,7 @@ check_file() {
 }
 
 check_env() {
-    local env="$1"
-    local conda_base
-    conda_base=$(conda info --base 2>/dev/null || echo "${HOME}/miniforge3")
-    if [ ! -d "${conda_base}/envs/${env}" ]; then
-        echo "❌ ERRO: ambiente conda '${env}' não encontrado"
-        echo "   Rode: mamba env create -f envs/${env}.yml --yes"
-        return 1
-    fi
+    # Ferramentas instaladas no base — check_env é no-op
     return 0
 }
 
