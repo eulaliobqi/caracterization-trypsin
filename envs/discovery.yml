@@ -1,0 +1,23 @@
+name: discovery
+# Ambiente para Fases 1-4 do pipeline de tripsinas
+# Inclui todas as ferramentas de bioinformática estrutural básica:
+# BUSCO, CD-HIT, TransDecoder, BLAST, DIAMOND, HMMER, MAFFT
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - python=3.11
+  - busco>=5.7                     # Fase 1: avaliação de qualidade do assembly
+  - cd-hit>=4.8                    # Fase 1: remoção de redundância (cd-hit-est)
+  - transdecoder>=5.5              # Fase 2: predição de ORFs
+  - blast>=2.14                    # Fase 2: hints para TransDecoder
+  - diamond>=2.1                   # Fase 3: busca rápida vs UniProt
+  - hmmer>=3.3                     # Fases 2+3: busca contra Pfam PF00089
+  - mafft>=7.515                   # Fase 4: alinhamento para verificar tríade catalítica
+  - biopython>=1.83
+  - pandas>=2.2
+  - numpy>=1.26
+  - scipy>=1.13
+  - matplotlib>=3.8
+  - seaborn>=0.13
