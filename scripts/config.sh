@@ -44,9 +44,22 @@ ENV_PHYLOGENY="phylogeny"  # Fase 6
 ENV_STRUCTURE="structure"  # Fase 7-8
 ENV_DOCKING="docking"      # Fase 9
 
-# ── Atalho para mamba run ─────────────────────────────────────────────────────
-# Uso: MAMBA_RUN $ENV_DISCOVERY comando arg1 arg2
-MAMBA_RUN="mamba run --no-capture-output -n"
+# ── Execução em ambiente conda ───────────────────────────────────────────────
+# mamba run gera exec -- que bash não aceita; usamos conda activate direto
+_conda_base="$(conda info --base 2>/dev/null || echo "${HOME}/miniforge3")"
+# shellcheck disable=SC1091
+[ -f "${_conda_base}/etc/profile.d/conda.sh" ]  && source "${_conda_base}/etc/profile.d/conda.sh"
+[ -f "${_conda_base}/etc/profile.d/mamba.sh" ]  && source "${_conda_base}/etc/profile.d/mamba.sh"
+
+mamba_run() {
+    local env="$1"; shift
+    conda activate "$env"
+    "$@"
+    local rc=$?
+    conda deactivate
+    return $rc
+}
+MAMBA_RUN="mamba_run"
 
 # ── Funções utilitárias ───────────────────────────────────────────────────────
 log_step() {
