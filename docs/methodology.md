@@ -19,7 +19,7 @@ A completude do transcriptoma foi avaliada com o programa BUSCO v6.0.0 (Manni et
 
 #### 2.2.2 Remoção de redundância — CD-HIT-EST
 
-Para reduzir isoformas redundantes geradas pela montagem de novo, os transcritos foram agrupados com CD-HIT-EST v4.8.1 (Li & Godzik, 2006; Fu et al., 2012) com limiar de identidade nucleotídica de 98% (`-c 0.98`), tamanho de palavra `-n 10`, utilizando 16 núcleos de processamento (`-T 16`) e 64 GB de memória (`-M 64000`). Os representantes de cada cluster foram utilizados nas etapas subsequentes.
+Para reduzir isoformas redundantes geradas pela montagem de novo, os transcritos foram agrupados com CD-HIT-EST v4.8.1 (Li & Godzik, 2006; Fu et al., 2012) com limiar de identidade nucleotídica de 95% (`-c 0.95`), tamanho de palavra `-n 10`, utilizando 16 núcleos de processamento (`-T 16`) e 64 GB de memória (`-M 64000`). Os representantes de cada cluster foram utilizados nas etapas subsequentes.
 
 ---
 

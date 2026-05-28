@@ -26,10 +26,7 @@ A avaliação com BUSCO (insecta_odb10, n = 1.367) revelou alta completude do tr
 
 #### 3.1.2 Remoção de redundância (CD-HIT-EST)
 
-<!-- A preencher após conclusão do CD-HIT a 98% -->
-> **[Pendente]** CD-HIT-EST a 98% de identidade — aguardando resultado do servidor.
->
-> Parâmetros utilizados: `-c 0.98 -n 10 -T 16 -M 64000`
+A clusterização com CD-HIT-EST a 95% de identidade nucleotídica resultou em **31.219 transcritos representativos**, correspondendo à remoção de 11.153 sequências redundantes (~26,3% do total). O conjunto não redundante foi utilizado como entrada para as etapas subsequentes.
 
 ---
 
