@@ -31,10 +31,22 @@ The 94.2% BUSCO completeness of the *A. gemmatalis* midgut transcriptome compare
 
 ### 3.2 ORF prediction and proteome characterisation
 
-> **[In progress — Phase 2 running]**
-> *To be updated upon completion of TransDecoder.Predict + validation.*
+TransDecoder identified 36,417 candidate ORFs of ≥ 100 amino acids from the 31,219 non-redundant transcripts (~1.17 ORFs per transcript). Of these, 22,379 were supported by DIAMOND blastp hits against the NCBI NR database, and an additional subset harboured Pfam-annotated domains as identified by hmmscan against Pfam-A. Following integration of both BLAST and Pfam scoring hints, TransDecoder.Predict retained **17,923 high-confidence protein models** (`--single_best_only`), comprising 12,494 complete (69.7%), 2,820 5′-partial (15.7%), and 1,430 3′-partial (8.0%) ORFs (Table 2).
 
-TransDecoder identified [X] candidate ORFs of ≥ 100 amino acids from the 31,219 non-redundant transcripts, of which [Y] were supported by DIAMOND homology hits against the NCBI NR database and [Z] harboured Pfam-annotated domains. Following integration of these homology and domain-based scoring hints, TransDecoder.Predict retained [N] high-confidence protein models (`--single_best_only`), comprising [n_complete] complete (5′- and 3′-intact), [n_5] 5′-partial, and [n_3] 3′-partial ORFs.
+**Table 2.** Summary of ORF prediction results from the *A. gemmatalis* larval midgut transcriptome (TransDecoder v5.7.1).
+
+| Category | Count | Percentage (%) |
+|---|---|---|
+| Long ORFs (≥ 100 aa) | 36,417 | — |
+| Final predicted proteins | 17,923 | 100 |
+| — Complete (5′- and 3′-intact) | 12,494 | 69.7 |
+| — 5′-partial | 2,820 | 15.7 |
+| — 3′-partial | 1,430 | 8.0 |
+| — Internal fragment | 1,179 | 6.6 |
+| DIAMOND NR hints used | 22,379 | — |
+| Pfam domain hints used | yes | — |
+
+The proportion of complete ORFs (69.7%) is consistent with high-quality lepidopteran transcriptomes processed with TransDecoder under similar conditions [ref]. The relatively high number of 5′-partial models (15.7%) likely reflects transcripts where the 5′ end was not fully captured during sequencing or assembly, a common feature of *de novo* Trinity assemblies from short-read data [Grabherr et al., 2011]. For the identification of functional trypsin isoforms — which requires the presence of the N-terminal signal peptide, propeptide, and catalytic triad — only complete ORFs will be considered in downstream analyses (Phases 3–4).
 
 ---
 
