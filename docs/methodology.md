@@ -40,7 +40,20 @@ Final ORF predictions were generated with `TransDecoder.Predict` using the `--si
 
 ---
 
-<!-- PHASE 3 — Trypsin identification: DIAMOND + HMMER (to fill) -->
+### 2.4 Trypsin identification — dual validation strategy (Phase 3)
+
+#### 2.4.1 Sequence homology — DIAMOND blastp
+
+The predicted proteome (17,923 sequences) was searched against the NCBI non-redundant protein database (NR; DIAMOND v2.1.9; Buchfink et al., 2021) using `blastp` in sensitive mode (`--sensitive --evalue 1e-10 --query-cover 50 --max-target-seqs 5 --outfmt 6`). Hits whose description contained the keywords *trypsin*, *serine protease*, *chymotrypsin*, *trypsinogen*, or *serine endopeptidase* (case-insensitive) were retained as DIAMOND candidates.
+
+#### 2.4.2 Domain detection — HMMER hmmsearch vs PF00089
+
+The Tryp_SPc domain model (PF00089) was extracted from Pfam-A (release [version]; Mistry et al., 2021) using `hmmfetch`, and the predicted proteome was searched with `hmmsearch` (HMMER v3.4; `--cpu 16 -E 1e-10`). Hits with domain coverage ≥ 80% of the PF00089 profile length were retained as HMMER candidates. This approach — searching with a single extracted HMM rather than scanning against all Pfam — substantially reduces computation time while maintaining sensitivity for the target domain.
+
+#### 2.4.3 Dual-validation intersection
+
+Trypsin candidates were classified into two tiers based on the overlap between DIAMOND and HMMER evidence: (i) *confident* — sequences positive in both DIAMOND and HMMER searches (high specificity, low false-positive rate); and (ii) *suggestive* — sequences positive in only one search (retained for manual review). Only confident candidates were advanced to subsequent analyses.
+
 <!-- PHASE 4 — Completeness filter: catalytic triad + Met + length (to fill) -->
 <!-- PHASE 5 — Primary characterisation: ProtParam + SignalP6 + InterProScan (to fill) -->
 <!-- PHASE 6 — Phylogeny: MAFFT + trimAl + IQ-TREE2 (to fill) -->

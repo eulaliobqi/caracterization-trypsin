@@ -52,7 +52,11 @@ The proportion of complete ORFs (69.7%) is consistent with high-quality lepidopt
 
 ### 3.3 Identification of trypsin-encoding transcripts
 
-> **[Pending — Phase 3]**
+> **[Running — Phase 3 in progress; values to be updated upon completion]**
+
+To identify trypsin-encoding sequences within the predicted proteome, a dual-validation strategy was applied combining sequence homology and domain detection. The 17,923 predicted proteins were searched against the NCBI NR database using DIAMOND blastp (sensitive mode; E-value ≤ 1×10⁻¹⁰), and hits annotated as trypsin, serine protease, chymotrypsin, or trypsinogen were retained as DIAMOND candidates. Concurrently, the Tryp_SPc domain (PF00089) was searched using hmmsearch against the extracted Pfam-A profile, retaining sequences with domain coverage ≥ 80%. Sequences supported by both DIAMOND homology and PF00089 domain evidence were classified as *confident* trypsin candidates; those supported by only one source as *suggestive*.
+
+**[Results pending]** Upon completion, this section will report: number of DIAMOND candidates, HMMER candidates, confident (intersection) and suggestive sequences, and a comparison with published Lepidoptera trypsin repertoires.
 
 ---
 
