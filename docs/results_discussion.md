@@ -97,11 +97,32 @@ The 67-sequence set is expected to include isoforms arising from alternative spl
 
 ### 3.5 Primary characterisation of *A. gemmatalis* trypsins
 
-> **[Pending — Phase 5 in preparation]**
+#### 3.5.1 Non-redundant trypsin set
 
-Prior to detailed characterisation, the 67 complete sequences will be subjected to protein-level clustering with CD-HIT (≥90% amino acid identity) to remove near-identical isoforms arising from Trinity assembly artefacts, yielding a non-redundant set estimated at 10–25 distinct trypsin isoforms. Two sequences with atypically large lengths (DN5998: 601 aa; DN11972: 607 aa) will be examined for possible assembly chimeras or multi-domain architectures before inclusion in downstream analyses.
+Protein-level clustering of the 67 complete trypsin sequences with CD-HIT (≥90% amino acid identity) yielded **52 non-redundant sequences**, collapsing 15 near-identical isoforms (22.4%). Automated inspection for atypically long sequences identified **four putative chimeras** (> 500 aa: DN5998, 601 aa; DN11972, 607 aa; DN8708, 676 aa; DN4838, 551 aa), which were retained in a separate set for manual BLAST verification but excluded from primary characterisation. The final working set comprised **48 trypsin sequences**.
 
-[Results to be added upon completion of Phase 5]
+#### 3.5.2 Physicochemical properties
+
+Physicochemical properties of the 48 non-redundant, non-chimeric trypsin sequences were computed with Biopython's ProteinAnalysis module (Table 5). Molecular weights ranged from 22.8 to 46.2 kDa (mean ± [SD pending]), with 93.8% (45/48) of sequences falling within the expected range for Lepidoptera trypsin zymogens (20–45 kDa). The mean molecular weight of 31.9 kDa is consistent with the pre-processed form inclusive of signal peptide and propeptide, as previously reported for *S. frugiperda* and *H. armigera* midgut trypsins [ref]. Theoretical isoelectric points ranged broadly from 4.1 to 9.6 (mean 6.8), reflecting the isoform diversity of the digestive trypsin complement, with mildly acidic to neutral pI values predominating. Based on the instability index criterion (< 40 = stable), 31 of 48 sequences (64.6%) were classified as stable proteins *in vitro*.
+
+**Table 5.** Summary of physicochemical properties of *A. gemmatalis* midgut trypsin isoforms (Phase 5; n = 48).
+
+| Parameter | Min | Max | Mean |
+|---|---|---|---|
+| Molecular weight (kDa) | 22.8 | 46.2 | 31.9 |
+| Isoelectric point (pI) | 4.1 | 9.6 | 6.8 |
+| Sequences within MW range (20–45 kDa) | — | — | 45/48 (93.8%) |
+| Stable (instability index < 40) | — | — | 31/48 (64.6%) |
+
+#### 3.5.3 Signal peptide prediction
+
+Signal peptide prediction with SignalP-6.0 was not available at the time of analysis (academic licence pending). This analysis will be completed prior to submission. Secretory signal peptides are expected in the majority of trypsin isoforms, consistent with their function as secreted digestive enzymes in the midgut lumen [ref].
+
+#### 3.5.4 Functional annotation (EggNOG-mapper)
+
+Functional annotation of the 48 trypsin sequences was performed using eggNOG-mapper v2.1.13 (Cantalapiedra et al., 2021) against the eggNOG 5.0 database, using DIAMOND for sequence search. All 48 sequences produced annotation hits. COG category, GO terms, and KEGG pathway assignments will be summarised in the final manuscript table.
+
+[EggNOG annotation details — Table 6 to be completed after manual curation of annotation file]
 
 ---
 

@@ -72,9 +72,9 @@ Physicochemical properties of non-redundant trypsin sequences were computed with
 
 The presence of N-terminal signal peptides — mandatory for secreted digestive enzymes — was predicted with SignalP-6.0 (Teufel et al., 2022), a transformer-based model that supports eukaryotic organisms. Sequences with predicted Sec/SPI signal peptides were considered consistent with secretory pathway localisation appropriate for midgut digestive enzymes.
 
-#### 2.6.4 Domain and functional annotation — InterProScan / HMMER
+#### 2.6.4 Functional annotation — eggNOG-mapper
 
-Functional domains in non-redundant trypsin sequences were annotated by searching against Pfam-A (hmmersearch, E-value ≤ 1×10⁻⁵) and by cross-referencing DIAMOND blastp hits against NR. Additional domain architecture information was obtained using InterProScan v5 (Jones et al., 2014) integrating Pfam, PRINTS, ProSite, and SUPERFAMILY databases.
+Functional annotation of the non-redundant trypsin set was performed using eggNOG-mapper v2.1.13 (Cantalapiedra et al., 2021) against the eggNOG 5.0 database (Huerta-Cepas et al., 2019). Protein sequences were searched against the eggNOG diamond database (`eggnog_proteins.dmnd`) with DIAMOND v2.1 in sensitive mode (`--sensitive --iterate`; E-value ≤ 0.001), and the top three hits were used for orthology assignment. COG functional categories, GO terms, KEGG pathway identifiers, and ortholog descriptions were extracted from the resulting annotation table.
 
 <!-- PHASE 6 — Phylogeny: MAFFT + trimAl + IQ-TREE2 (to fill) -->
 <!-- PHASE 5 — Primary characterisation: ProtParam + SignalP6 + InterProScan (to fill) -->
