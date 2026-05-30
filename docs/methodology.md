@@ -54,7 +54,11 @@ The Tryp_SPc domain model (PF00089) was extracted from Pfam-A (release [version]
 
 Trypsin candidates were classified into two tiers based on the overlap between DIAMOND and HMMER evidence: (i) *confident* — sequences positive in both DIAMOND and HMMER searches (high specificity, low false-positive rate); and (ii) *suggestive* — sequences positive in only one search (retained for manual review). Only confident candidates were advanced to subsequent analyses.
 
-<!-- PHASE 4 — Completeness filter: catalytic triad + Met + length (to fill) -->
+### 2.5 Completeness filter (Phase 4)
+
+Full-length trypsin candidates were identified among the 191 confident sequences using three mandatory criteria applied in conjunction: (i) N-terminal methionine at position 1; (ii) minimum length of 200 amino acids; and (iii) presence of a Ser195 active-site motif. Three motif classes were considered: canonical GDSGG (regex `GDS[AG]G`); conservative alternative `[GA]DS[GASTVNC]G`; and putative Ser195 variants `GD[ACTVNILMF]GG | [GA]D[ACTVNILMF][GA]G`, in which a non-serine residue occupies the Ser195 position but the flanking GDXGG context is preserved. Sequences meeting all three criteria with an intact serine motif were designated *complete* and advanced to primary characterisation; those with a putative Ser195 substitution were retained separately for evolutionary analysis.
+
+<!-- PHASE 5 — Primary characterisation (to fill) -->
 <!-- PHASE 5 — Primary characterisation: ProtParam + SignalP6 + InterProScan (to fill) -->
 <!-- PHASE 6 — Phylogeny: MAFFT + trimAl + IQ-TREE2 (to fill) -->
 <!-- PHASE 7 — Structure: AlphaFold3 via nf-core/proteinfold (to fill) -->

@@ -71,7 +71,27 @@ The DIAMOND search recovered 285 candidate proteins annotated as trypsin, chymot
 
 ### 3.4 Full-length trypsin isoforms: completeness filter
 
-> **[Pending — Phase 4]**
+The 191 confident trypsin candidates were subjected to a three-criterion completeness filter: (i) N-terminal methionine (complete ORF start), (ii) minimum length of 200 amino acids, and (iii) presence of the Ser195 active-site motif GDSGG or its conservative variants (Table 4). Of the 191 sequences, 132 (69.1%) contained an initiator methionine and 184 (96.3%) met the length criterion, indicating that the majority of DIAMOND∩HMMER candidates represent full-length or near-full-length ORFs. The canonical GDSGG motif or a conservative variant was detected in 100 sequences (52.4%), with an additional seven sequences (3.7%) displaying a GDXGG pattern (X ≠ Ser) suggestive of a Ser195 substitution.
+
+Following application of all three criteria, **67 complete trypsin sequences** were retained, with a mean length of 314 amino acids (range: 209–676 aa), consistent with the expected size range for lepidopteran trypsin zymogens including signal peptide and propeptide (250–350 aa; [ref]). An additional **6 sequences** were identified as putative Ser195 variants (GDXGG motif preserved), representing a potentially inactive or neofunctionalised trypsin-like enzyme class of evolutionary interest. Fifty-five sequences were classified as borderline (Met + length criteria met but lacking a detectable Ser195 context), and 63 were rejected due to absence of an initiator methionine or insufficient length.
+
+The 67-sequence set is expected to include isoforms arising from alternative splicing and allelic variants, inherent to *de novo* Trinity assemblies. Protein-level sequence clustering will be applied in Phase 5 to derive a non-redundant set of functionally distinct trypsin isoforms for structural modelling.
+
+**Table 4.** Completeness filter results for *A. gemmatalis* trypsin candidates (Phase 4).
+
+| Category | Count | % of 191 |
+|---|---|---|
+| Sequences analysed | 191 | 100 |
+| Met initial | 132 | 69.1 |
+| ≥ 200 aa | 184 | 96.3 |
+| GDSGG motif (canonical) | 100 | 52.4 |
+| GDXGG motif (Ser195 variant) | 7 | 3.7 |
+| **Complete (strict)** | **67** | **35.1** |
+| Putative Ser195 variants | 6 | 3.1 |
+| Borderline | 55 | 28.8 |
+| Rejected | 63 | 33.0 |
+| Mean length (complete) | 314 aa | — |
+| Length range (complete) | 209–676 aa | — |
 
 ---
 
