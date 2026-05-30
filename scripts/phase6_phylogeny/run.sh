@@ -328,13 +328,41 @@ TRIMMED="${OUT}/alignment_trimmed.fasta"
 if [ -f "$TRIMMED" ]; then
     echo "⏩ trimAl já executado — pulando."
 else
+    # -gappyout: remove apenas colunas com gap em maioria — menos agressivo que -automated1
+    # Para sequências divergentes inter-espécies, -gappyout retém ~30-60% das posições
     trimal \
         -in  "$ALIGNED" \
         -out "$TRIMMED" \
-        -automated1 \
+        -gappyout \
         -fasta \
         2>&1
-    echo "✅ trimAl concluído"
+
+    # Verificar se reteve posições suficientes (≥15% do original)
+    TRIM_CHECK=$(python3 -c "
+from Bio import SeqIO
+n = sum(1 for _ in open('${TRIMMED}') if _.startswith('>'))
+for r in SeqIO.parse('${TRIMMED}', 'fasta'):
+    print(len(r.seq)); break
+" 2>/dev/null || echo "0")
+    PCT_CHECK=$(python3 -c "
+try:
+    pct = int('${TRIM_CHECK}') / int('${ALN_LEN}') * 100
+    print(f'{pct:.1f}')
+except: print('0')
+" 2>/dev/null || echo "0")
+
+    if python3 -c "exit(0 if float('${PCT_CHECK}') >= 15 else 1)" 2>/dev/null; then
+        echo "✅ trimAl concluído (${PCT_CHECK}% retido)"
+    else
+        echo "⚠️  trimAl reteve muito pouco (${PCT_CHECK}%) — usando -gt 0.5 em vez de -gappyout"
+        trimal \
+            -in  "$ALIGNED" \
+            -out "$TRIMMED" \
+            -gt  0.5 \
+            -fasta \
+            2>&1
+        echo "✅ trimAl (gt=0.5) concluído"
+    fi
 fi
 
 TRIM_LEN=$(python3 -c "
@@ -361,8 +389,22 @@ TREE_PREFIX="${OUT}/trypsin_tree"
 if [ -f "${TREE_PREFIX}.treefile" ]; then
     echo "⏩ IQ-TREE2 já executado — pulando."
 else
-    echo "Rodando IQ-TREE2 (modelo LG+F+R4 ou seleção automática)..."
-    iqtree2 \
+    # Detectar binário: iqtree2 (instalação padrão) ou iqtree (alguns conda)
+    IQTREE_BIN=""
+    for bin in iqtree2 iqtree; do
+        if command -v "$bin" &>/dev/null; then
+            IQTREE_BIN="$bin"
+            echo "IQ-TREE encontrado: $($bin --version 2>&1 | head -1)"
+            break
+        fi
+    done
+    if [ -z "$IQTREE_BIN" ]; then
+        echo "❌ IQ-TREE não encontrado. Instale: mamba install -n phylogeny -c bioconda iqtree -y"
+        exit 1
+    fi
+
+    echo "Rodando $IQTREE_BIN (modelo TEST + UFBoot 1000 + SH-aLRT 1000)..."
+    "$IQTREE_BIN" \
         -s    "$TRIMMED" \
         --prefix "$TREE_PREFIX" \
         -m    TEST \
@@ -371,7 +413,7 @@ else
         -T    "$CPUS" \
         --redo \
         2>&1 | tee "${LOGS_DIR}/iqtree2_phase6.log"
-    echo "✅ IQ-TREE2 concluído"
+    echo "✅ IQ-TREE concluído"
 fi
 
 # ══════════════════════════════════════════════════════════════════════════════
