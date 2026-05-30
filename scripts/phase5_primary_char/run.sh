@@ -134,18 +134,33 @@ if [ -f "$PROTPARAM_TSV" ]; then
     echo "⏩ ProtParam já executado — pulando."
 else
     python3 - << PYEOF
-import sys
+import sys, re
 from pathlib import Path
 from Bio import SeqIO
 from Bio.SeqUtils.ProtParam import ProteinAnalysis
 
+# Apenas os 20 aminoácidos padrão — ProteinAnalysis rejeita qualquer outro
+STANDARD_AA = set("ACDEFGHIKLMNPQRSTVWY")
+
+def clean_seq(s):
+    """Remove stop codon, gaps, e qualquer aa ambíguo (B, Z, U, J, X, O)."""
+    s = s.upper().replace("*","").replace("-","").replace(" ","")
+    return re.sub(r"[^ACDEFGHIKLMNPQRSTVWY]", "", s)
+
 fasta = Path("${ANALYSIS_FASTA}")
 out_tsv = Path("${PROTPARAM_TSV}")
 
+if not fasta.exists():
+    print(f"ERRO: arquivo não encontrado: {fasta}", file=sys.stderr)
+    sys.exit(1)
+
 rows = []
+n_skipped = 0
 for rec in SeqIO.parse(fasta, "fasta"):
-    seq = str(rec.seq).replace("*","").replace("-","").replace("X","")
+    raw = str(rec.seq)
+    seq = clean_seq(raw)
     if len(seq) < 10:
+        n_skipped += 1
         continue
     try:
         pa = ProteinAnalysis(seq)
@@ -154,7 +169,6 @@ for rec in SeqIO.parse(fasta, "fasta"):
         ii  = pa.instability_index()
         gv  = pa.gravy()
         ai  = pa.aromaticity()
-        # Índice alifático (não disponível direto — calcular manualmente)
         aa_comp = pa.get_amino_acids_percent()
         aliphatic = (aa_comp.get('A',0) + 2.9 * aa_comp.get('V',0) +
                      3.9 * (aa_comp.get('I',0) + aa_comp.get('L',0))) * 100
@@ -171,7 +185,13 @@ for rec in SeqIO.parse(fasta, "fasta"):
             "mw_ok":            "yes" if 20 <= mw <= 45 else "no",
         })
     except Exception as e:
+        print(f"  ⚠️  {rec.id}: erro ProtParam — {e}", file=sys.stderr)
         rows.append({"id": rec.id, "error": str(e)})
+
+print(f"Sequências lidas: {len(rows) + n_skipped} | processadas: {len(rows)} | puladas (<10aa): {n_skipped}")
+n_errors = sum(1 for r in rows if "error" in r)
+if n_errors:
+    print(f"  ⚠️  Com erro: {n_errors} (ver coluna 'error' no TSV)")
 
 with open(out_tsv, "w") as f:
     cols = ["id","length_aa","mw_kda","pi","instability_idx","stable",
@@ -179,22 +199,25 @@ with open(out_tsv, "w") as f:
     f.write("\t".join(cols) + "\n")
     for r in rows:
         if "error" in r:
-            f.write(f"{r['id']}\tERROR\t{r['error']}\n")
+            f.write(f"{r['id']}\tERROR\t\t\t\t\t\t\t\t{r['error']}\n")
         else:
             f.write("\t".join(str(r.get(c,"")) for c in cols) + "\n")
 
-# Estatísticas
 valid = [r for r in rows if "error" not in r]
+if not valid:
+    print("❌ ERRO: nenhuma sequência processada com sucesso pelo ProtParam.")
+    print("   Verifique se o arquivo FASTA contém sequências proteicas válidas.")
+    sys.exit(1)
+
 mws = [float(r["mw_kda"]) for r in valid]
 pis = [float(r["pi"])     for r in valid]
-iis = [float(r["instability_idx"]) for r in valid]
 n_stable = sum(1 for r in valid if r["stable"] == "yes")
 n_mw_ok  = sum(1 for r in valid if r["mw_ok"] == "yes")
 
-print(f"Sequências analisadas: {len(valid)}")
-print(f"MW: {min(mws):.1f}–{max(mws):.1f} kDa  (média: {sum(mws)/len(mws):.1f})")
-print(f"pI: {min(pis):.1f}–{max(pis):.1f}       (média: {sum(pis)/len(pis):.1f})")
-print(f"Estáveis (instab < 40): {n_stable}/{len(valid)}")
+print(f"\nSequências analisadas com sucesso: {len(valid)}")
+print(f"MW:  {min(mws):.1f}–{max(mws):.1f} kDa  (média: {sum(mws)/len(mws):.1f})")
+print(f"pI:  {min(pis):.1f}–{max(pis):.1f}       (média: {sum(pis)/len(pis):.1f})")
+print(f"Estáveis (instab < 40):  {n_stable}/{len(valid)}")
 print(f"MW esperada (20-45 kDa): {n_mw_ok}/{len(valid)}")
 PYEOF
     echo "✅ ProtParam concluído: ${PROTPARAM_TSV}"
