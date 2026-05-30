@@ -128,7 +128,13 @@ Functional annotation of the 48 trypsin sequences was performed using eggNOG-map
 
 ### 3.6 Phylogenetic analysis
 
-> **[Pending — Phase 6]**
+The 48 non-redundant *A. gemmatalis* trypsin sequences were subjected to phylogenetic analysis alongside 57 reference sequences comprising published trypsin and serine protease sequences from *A. gemmatalis* (including AWL83213.1 and additional sequences retrieved by NCBI programmatic search), other Noctuidae/Erebidae (*Heliothis virescens*, *Agrotis ipsilon*, *Mamestra configurata*), and representatives of broader Lepidoptera clades (*Spodoptera frugiperda*, *Helicoverpa armigera*, *Trichoplusia ni*, *Manduca sexta*, *Bombyx mori*, *Leguminivora glycinivorella*), plus bovine trypsin (P00760) as outgroup. After MAFFT-linsi alignment (1,923 positions) and trimAl (-gappyout; 255 positions retained, 13.3%), the dataset comprised 104 unique sequences.
+
+Maximum-likelihood phylogenetic inference with IQ-TREE2 (Minh et al., 2020) selected **Q.PFAM+G4** as the best-fit model (BIC; Γ shape α = 1.198), which is calibrated specifically for Pfam protein family data, making it particularly appropriate for trypsin/serine protease phylogenomics. Tree search converged after 561 iterations (log-likelihood = −36,563.837; ultrafast bootstrap correlation coefficient = 0.996), with 1,000 ultrafast bootstrap replicates (UFBoot) and 1,000 SH-aLRT replicates used to assess branch support.
+
+[**Figure X.** Maximum-likelihood phylogenetic tree — to be generated in Phase 11 with annotated clades and bootstrap values]
+
+Preliminary inspection of the topology reveals that *A. gemmatalis* trypsin sequences group into multiple distinct clades, consistent with the diversification of the digestive trypsin complement reported in other Lepidoptera [ref]. Seven sequences with > 50% alignment gaps were retained for the initial analysis but will be excluded in the final publication-quality tree.
 
 ---
 

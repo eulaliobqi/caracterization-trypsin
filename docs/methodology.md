@@ -76,9 +76,20 @@ The presence of N-terminal signal peptides — mandatory for secreted digestive 
 
 Functional annotation of the non-redundant trypsin set was performed using eggNOG-mapper v2.1.13 (Cantalapiedra et al., 2021) against the eggNOG 5.0 database (Huerta-Cepas et al., 2019). Protein sequences were searched against the eggNOG diamond database (`eggnog_proteins.dmnd`) with DIAMOND v2.1 in sensitive mode (`--sensitive --iterate`; E-value ≤ 0.001), and the top three hits were used for orthology assignment. COG functional categories, GO terms, KEGG pathway identifiers, and ortholog descriptions were extracted from the resulting annotation table.
 
-<!-- PHASE 6 — Phylogeny: MAFFT + trimAl + IQ-TREE2 (to fill) -->
-<!-- PHASE 5 — Primary characterisation: ProtParam + SignalP6 + InterProScan (to fill) -->
-<!-- PHASE 6 — Phylogeny: MAFFT + trimAl + IQ-TREE2 (to fill) -->
+### 2.7 Phylogenetic analysis (Phase 6)
+
+#### 2.7.1 Reference sequences
+
+Reference trypsin and serine protease sequences were retrieved from NCBI Protein and UniProtKB databases via programmatic queries. Published *A. gemmatalis* sequences (including AWL83213.1 and others) were supplemented by a dynamic NCBI search (organism: *Anticarsia gemmatalis*; title: trypsin; up to 30 results). Additional Lepidoptera references were retrieved for *S. frugiperda*, *H. armigera*, *T. ni*, *M. sexta*, *B. mori*, and *L. glycinivorella* using curated accession numbers. *Bos taurus* trypsin (UniProt P00760) served as outgroup for tree rooting.
+
+#### 2.7.2 Multiple sequence alignment and trimming
+
+Sequences were combined (48 *A. gemmatalis* + 57 references = 105 total; 1 identical pair collapsed) and aligned using MAFFT v7 with the L-INS-i algorithm (`--localpair --maxiterate 1000`), which applies local pairwise alignment and iterative refinement for maximum accuracy on divergent sequences (Katoh & Standley, 2013). Poorly aligned and gap-rich columns were removed with trimAl v1.4.1 (`-gappyout`), retaining 255 of 1,923 alignment positions (13.3%).
+
+#### 2.7.3 Phylogenetic inference
+
+Maximum-likelihood trees were inferred with IQ-TREE2 v2.2+ (Minh et al., 2020) using automatic model selection via ModelFinder (Kalyaanamoorthy et al., 2017). The best-fit substitution model (selected by BIC) was **Q.PFAM+G4** (Γ shape α = 1.198), calibrated for Pfam protein family data. Branch support was assessed with 1,000 ultrafast bootstrap replicates (`-B 1000`) and 1,000 SH-aLRT replicates (`-alrt 1000`). Branches with UFBoot ≥ 95% and SH-aLRT ≥ 80% were considered strongly supported.
+
 <!-- PHASE 7 — Structure: AlphaFold3 via nf-core/proteinfold (to fill) -->
 <!-- PHASE 8 — Structural validation: MolProbity + ProSA + Foldseek + ConSurf (to fill) -->
 <!-- PHASE 9 — Docking: AutoDock Vina + HADDOCK + PLIP (to fill) -->
