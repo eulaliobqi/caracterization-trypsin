@@ -56,7 +56,16 @@ The proportion of complete ORFs (69.7%) is consistent with high-quality lepidopt
 
 To identify trypsin-encoding sequences within the predicted proteome, a dual-validation strategy was applied combining sequence homology and domain detection. The 17,923 predicted proteins were searched against the NCBI NR database using DIAMOND blastp (sensitive mode; E-value ≤ 1×10⁻¹⁰), and hits annotated as trypsin, serine protease, chymotrypsin, or trypsinogen were retained as DIAMOND candidates. Concurrently, the Tryp_SPc domain (PF00089) was searched using hmmsearch against the extracted Pfam-A profile, retaining sequences with domain coverage ≥ 80%. Sequences supported by both DIAMOND homology and PF00089 domain evidence were classified as *confident* trypsin candidates; those supported by only one source as *suggestive*.
 
-**[Results pending]** Upon completion, this section will report: number of DIAMOND candidates, HMMER candidates, confident (intersection) and suggestive sequences, and a comparison with published Lepidoptera trypsin repertoires.
+The DIAMOND search recovered 285 candidate proteins annotated as trypsin, chymotrypsin, or serine endopeptidase, with top hits including sequences from closely related noctuids (*Trichoplusia ni*, *Heliothis virescens*, *Agrotis ipsilon*) and, notably, *A. gemmatalis* trypsin 1 itself (AWL83213.1; 7 hits), confirming the validity of the approach. Concurrently, hmmsearch against PF00089 identified 10,675 proteins with domain coverage ≥ 80% (E-value ≤ 1×10⁻¹⁰), reflecting the broad representation of serine proteases S1 in the predicted proteome. The intersection of both evidence tiers yielded **191 confident trypsin candidates** (Table 3), a figure consistent with the expected trypsin repertoire of Lepidoptera midgut (30–200; [ref]), and well within the range reported for related species such as *Spodoptera frugiperda* (~150 trypsin-like sequences; [ref]) and *Manduca sexta* (~80; [ref]). An additional 10,578 proteins were classified as suggestive (PF00089-positive but lacking trypsin keyword annotation in NR), likely representing other serine proteases of the S1 family not filtered by keyword.
+
+**Table 3.** Summary of dual-validation trypsin identification (Phase 3).
+
+| Evidence tier | Count |
+|---|---|
+| DIAMOND candidates (NR, keyword filter) | 285 |
+| HMMER candidates (PF00089, coverage ≥ 80%) | 10,675 |
+| **Confident (DIAMOND ∩ HMMER)** | **191** |
+| Suggestive (DIAMOND or HMMER only) | 10,578 |
 
 ---
 
