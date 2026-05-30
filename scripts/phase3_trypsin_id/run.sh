@@ -124,6 +124,12 @@ else
 
     # Filtrar por cobertura do domínio
     echo "Filtrando por cobertura ≥ ${PFAM_COVERAGE}..."
+    # Colunas do hmmsearch --domtblout (0-indexado):
+    # p[0]  = target name  → ID da proteína (sequência buscada)
+    # p[5]  = qlen         → comprimento do perfil HMM
+    # p[11] = c-Evalue (domínio)
+    # p[15] = hmm coord from
+    # p[16] = hmm coord to
     python3 - << PYEOF
 from pathlib import Path
 
@@ -141,11 +147,11 @@ with open(domtbl) as f:
         if len(p) < 23: continue
         n_total += 1
         try:
-            seq_id   = p[2]
-            hmm_len  = int(p[5])
-            dom_ev   = float(p[11])
-            hmm_from = int(p[17])
-            hmm_to   = int(p[18])
+            seq_id   = p[0]          # target = proteína (hmmsearch)
+            hmm_len  = int(p[5])     # qlen = comprimento do perfil HMM
+            dom_ev   = float(p[11])  # c-Evalue do domínio
+            hmm_from = int(p[15])    # início no perfil HMM
+            hmm_to   = int(p[16])    # fim no perfil HMM
         except (ValueError, IndexError): continue
         if dom_ev > ev_thr: continue
         cov = (hmm_to - hmm_from + 1) / hmm_len if hmm_len > 0 else 0
