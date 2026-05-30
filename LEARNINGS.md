@@ -51,6 +51,14 @@
   - Brioschi et al. 2007 *Insect Biochem Mol Biol* (tripsinas A. gemmatalis)
   - Brito et al. 2001 *J Insect Physiol* (interação com SKTI)
 
+## ERRO-002 [2026-05-29] Colunas trocadas no domtblout (hmmscan vs hmmsearch)
+- **Sintoma:** interseção DIAMOND ∩ HMMER retornou 0 confident (1.419 HMMER hits mas nenhuma sobreposição)
+- **Causa raiz:** script usava colunas do formato `hmmscan` mas rodamos `hmmsearch` — colunas invertidas:
+  - hmmscan: `p[0]`=HMM model, `p[2]`=seq_id, `p[17-18]`=hmm coords
+  - hmmsearch: `p[0]`=seq_id (proteína), `p[3]`=HMM model, `p[15-16]`=hmm coords, `p[5]`=qlen (HMM length)
+- **Solução:** usar `p[0]` como seq_id e `p[15]`/`p[16]` para cobertura do HMM
+- **Prevenção:** sempre verificar se o output foi gerado com hmmscan ou hmmsearch antes de parsear
+
 ## ERRO-001 [2026-05-28] mamba run incompatível com bash no servidor Debian
 - **Sintoma:** `mamba run -n ENV cmd` falha com `exec: --: invalid option`
 - **Causa raiz:** mamba gera script temporário com `exec -- cmd`; bash builtin exec não aceita `--`
