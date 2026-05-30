@@ -97,7 +97,11 @@ The 67-sequence set is expected to include isoforms arising from alternative spl
 
 ### 3.5 Primary characterisation of *A. gemmatalis* trypsins
 
-> **[Pending — Phase 5]**
+> **[Pending — Phase 5 in preparation]**
+
+Prior to detailed characterisation, the 67 complete sequences will be subjected to protein-level clustering with CD-HIT (≥90% amino acid identity) to remove near-identical isoforms arising from Trinity assembly artefacts, yielding a non-redundant set estimated at 10–25 distinct trypsin isoforms. Two sequences with atypically large lengths (DN5998: 601 aa; DN11972: 607 aa) will be examined for possible assembly chimeras or multi-domain architectures before inclusion in downstream analyses.
+
+[Results to be added upon completion of Phase 5]
 
 ---
 

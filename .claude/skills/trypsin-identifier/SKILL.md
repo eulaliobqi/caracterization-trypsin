@@ -1,95 +1,56 @@
 ---
 name: trypsin-identifier
-description: Identifica tripsinas em proteoma predito via dupla validação DIAMOND + HMMER (Pfam Tryp_SPc PF00089). Trigger: "identificar tripsinas", "DIAMOND HMMER", após TransDecoder produzir .pep.
+description: Identifica tripsinas em proteoma predito via dupla validação DIAMOND + hmmsearch (PF00089 extraído). Trigger: "identificar tripsinas", "DIAMOND HMMER", após TransDecoder produzir .pep.
 ---
 
-# Trypsin Identifier (DIAMOND + HMMER)
+# Trypsin Identifier (DIAMOND + HMMER) — Fase 3
 
-## Quando usar
-- Após TransDecoder produzir `*.pep` (Fase 2 concluída)
-- Para qualquer screen de serina-proteases classe S1
-- Quando usuário pede "identificar tripsinas" ou "buscar serino-proteases"
+## Resultado obtido em A. gemmatalis (2026-05-29)
+- Input: 17.923 proteínas preditas (TransDecoder)
+- DIAMOND vs NR (keywords): **285 candidatos**
+- hmmsearch vs PF00089 (cobertura ≥80%): **10.675 candidatos**
+- **Confident (∩): 191** — range esperado para Lepidoptera ✅
+- Suggestive (∪\∩): 10.578
 
-## Inputs
-- `results/02_orfs/transdecoder.pep` (TransDecoder output)
-- `data/references/uniprot_sprot.dmnd` (DIAMOND DB — criar com `diamond makedb`)
-- `data/references/Pfam-A.hmm` (versão ≥ 36.0, com PF00089)
+## CRÍTICO: hmmsearch ≠ hmmscan (colunas diferentes)
+Sempre usar **hmmsearch** (query=HMM, target=proteínas). Colunas do domtblout:
+```
+p[0]  = target name  → ID da proteína ← usar como seq_id
+p[3]  = query name   → HMM model (PF00089)
+p[5]  = qlen         → comprimento do perfil HMM ← usar para cobertura
+p[11] = c-Evalue     → e-value do domínio
+p[15] = hmm_from     → início no perfil HMM ← usar para cobertura
+p[16] = hmm_to       → fim no perfil HMM   ← usar para cobertura
+```
+**hmmscan** (query=proteína, target=HMM): p[0]=HMM, p[2]=seq_id, p[17-18]=coords.
+Confundir os dois resulta em 0 confident (ERRO-002 no LEARNINGS.md).
 
-## Procedimento
-
-### 1. DIAMOND BLASTp (mais rápido que BLAST, padrão 2025)
+## Procedimento correto
 ```bash
-diamond blastp \
-  --query results/02_orfs/transdecoder.pep \
-  --db data/references/uniprot_sprot.dmnd \
-  --outfmt 6 qseqid sseqid stitle pident length qlen slen evalue bitscore \
-  --evalue 1e-10 \
-  --max-target-seqs 5 \
-  --sensitive \
-  --threads ${SLURM_CPUS_PER_TASK:-8} \
-  --out results/03_trypsin_ids/diamond_hits.tsv
+conda activate orf_prediction
+bash scripts/phase3_trypsin_id/run.sh
 ```
 
-### 2. HMMER scan com PF00089 (Tryp_SPc)
-```bash
-# Extrair apenas o perfil de tripsina
-hmmfetch data/references/Pfam-A.hmm Tryp_SPc > data/references/trypsin.hmm
-hmmpress data/references/trypsin.hmm
+O script faz automaticamente:
+1. DIAMOND blastp vs NR (`--sensitive -e 1e-10 -k 5 --query-cover 50`)
+2. `hmmfetch Pfam-A.hmm PF00089` → extrai modelo isolado
+3. `hmmsearch --domtblout` (rápido: minutos vs horas do hmmscan completo)
+4. Filtro de cobertura ≥80% com colunas corretas para hmmsearch
+5. Interseção Python → confident + suggestive FASTAs
 
-# Buscar
-hmmsearch \
-  --domtblout results/03_trypsin_ids/trypsin_hmm.out \
-  --cpu ${SLURM_CPUS_PER_TASK:-8} \
-  -E 1e-10 \
-  data/references/trypsin.hmm \
-  results/02_orfs/transdecoder.pep
-```
-
-### 3. Interseção robusta (Python)
-```python
-import pandas as pd
-
-# Parse DIAMOND — filtrar por keyword "trypsin" no stitle
-diamond = pd.read_csv("results/03_trypsin_ids/diamond_hits.tsv",
-                      sep='\t', header=None,
-                      names=['qseqid','sseqid','stitle','pident','length',
-                             'qlen','slen','evalue','bitscore'])
-diamond_trypsin = set(
-    diamond[diamond['stitle'].str.lower().str.contains('trypsin|serine protease')]['qseqid']
-)
-
-# Parse HMMER
-hmm_ids = set()
-with open("results/03_trypsin_ids/trypsin_hmm.out") as f:
-    for line in f:
-        if not line.startswith('#'):
-            hmm_ids.add(line.split()[0])
-
-# Interseção = alta confiança
-confident_ids = diamond_trypsin & hmm_ids
-suggestive_ids = (diamond_trypsin | hmm_ids) - confident_ids
-
-print(f"Confident trypsins: {len(confident_ids)}")
-print(f"Suggestive: {len(suggestive_ids)}")
-```
-
-### 4. Extrair FASTAs
-```bash
-seqkit grep -n -f confident_ids.txt results/02_orfs/transdecoder.pep \
-  > results/03_trypsin_ids/trypsins_confident.fasta
-seqkit grep -n -f suggestive_ids.txt results/02_orfs/transdecoder.pep \
-  > results/03_trypsin_ids/trypsins_suggestive.fasta
-```
+## Bancos disponíveis neste servidor
+- NR DIAMOND: `/home/eulalio/databases/nr/nr.dmnd`
+- Pfam-A (pressionado): `/home/eulalio/databases/pfam/Pfam-A.hmm`
 
 ## Outputs
-- `results/03_trypsin_ids/trypsins_confident.fasta` → interseção DIAMOND+HMMER
-- `results/03_trypsin_ids/trypsins_suggestive.fasta` → para revisão manual
-- `results/03_trypsin_ids/identification_report.tsv` → tabela completa
+- `results/phase3/trypsins_confident.fasta` — DIAMOND∩HMMER (191 seqs)
+- `results/phase3/trypsins_suggestive.fasta` — só um critério (10.578)
+- `results/phase3/identification_report.tsv` — tabela completa
+- `results/phase3/hmmer_tryp_spc.domtblout` — domtblout completo do hmmsearch
 
 ## Erros comuns
 | Erro | Causa | Fix |
 |---|---|---|
-| 0 hits HMMER | Pfam DB desatualizado ou PF00089 ausente | Baixe Pfam ≥ 36.0 |
-| Muitos hits "trypsin-like" | E-value frouxo | Use 1e-15 ao invés de 1e-10 |
-| DIAMOND db error | Versão diamond ≠ db | Recrie .dmnd com mesma versão |
-| Muitos suggestive | Keywords muito amplas | Restringir a "trypsin" apenas |
+| 0 confident | Colunas hmmscan usadas para hmmsearch | Corrigir p[0] e p[15-16] |
+| hmmsearch lento | Usando Pfam-A.hmm completo | Extrair PF00089 com hmmfetch |
+| mamba run falha | exec -- incompatível com bash | Usar conda activate no início do script |
