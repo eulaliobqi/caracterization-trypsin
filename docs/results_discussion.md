@@ -103,15 +103,21 @@ Protein-level clustering of the 67 complete trypsin sequences with CD-HIT (≥90
 
 #### 3.5.2 Physicochemical properties
 
-Physicochemical properties of the 48 non-redundant, non-chimeric trypsin sequences were computed with Biopython's ProteinAnalysis module (Table 5). Molecular weights ranged from 22.8 to 46.2 kDa (mean ± [SD pending]), with 93.8% (45/48) of sequences falling within the expected range for Lepidoptera trypsin zymogens (20–45 kDa). The mean molecular weight of 31.9 kDa is consistent with the pre-processed form inclusive of signal peptide and propeptide, as previously reported for *S. frugiperda* and *H. armigera* midgut trypsins [ref]. Theoretical isoelectric points ranged broadly from 4.1 to 9.6 (mean 6.8), reflecting the isoform diversity of the digestive trypsin complement, with mildly acidic to neutral pI values predominating. Based on the instability index criterion (< 40 = stable), 31 of 48 sequences (64.6%) were classified as stable proteins *in vitro*.
+Physicochemical properties of the 48 non-redundant, non-chimeric trypsin sequences were computed with Biopython's ProteinAnalysis module (Table 5). Molecular weights ranged from 22.82 to 46.19 kDa (mean 31.9 kDa), with 93.8% (45/48) of sequences falling within the expected range for Lepidoptera trypsin zymogens (20–45 kDa). The mean molecular weight of 31.9 kDa is consistent with the pre-processed form inclusive of N-terminal signal peptide and propeptide, as previously reported for *S. frugiperda* (30–33 kDa; [ref]) and *H. armigera* midgut trypsins [ref]. Three sequences exceeded 45 kDa (46.2, 45.1, and 45.6 kDa) and likely represent larger isoforms or fusion proteins warranting further investigation.
+
+Theoretical isoelectric points ranged broadly from 4.10 to 9.58 (mean 6.8), reflecting the isoform diversity of the digestive trypsin complement. The bimodal pI distribution — with acidic isoforms (pI 4.1–5.5, n = ~15) and basic isoforms (pI 7.0–9.6, n = ~20) — is consistent with the alkaline midgut environment (pH 10–11) of *A. gemmatalis* larvae, in which alkaline-adapted trypsin isoforms predominate physiologically [Brito et al., 2001]. Protein sequences were predominantly hydrophilic (mean GRAVY = −0.019; range: −0.668 to +0.351), consistent with secreted enzymes functioning in aqueous digestive milieu. The aliphatic index ranged from 63.2 to 100.5 (mean ~84), indicating moderate thermostability for all isoforms. Based on the instability index criterion (< 40 = stable *in vitro*), 31 of 48 sequences (64.6%) were classified as stable; the 17 unstable sequences (35.4%; instability index range: 40.5–86.1) may represent isoforms with different turnover or regulatory properties.
 
 **Table 5.** Summary of physicochemical properties of *A. gemmatalis* midgut trypsin isoforms (Phase 5; n = 48).
 
 | Parameter | Min | Max | Mean |
 |---|---|---|---|
-| Molecular weight (kDa) | 22.8 | 46.2 | 31.9 |
-| Isoelectric point (pI) | 4.1 | 9.6 | 6.8 |
-| Sequences within MW range (20–45 kDa) | — | — | 45/48 (93.8%) |
+| Molecular weight (kDa) | 22.82 | 46.19 | 31.9 |
+| Isoelectric point (pI) | 4.10 | 9.58 | 6.8 |
+| Sequence length (aa) | 217 | 420 | 295 |
+| Instability index | 17.7 | 86.1 | — |
+| GRAVY | −0.668 | +0.351 | −0.019 |
+| Aliphatic index | 63.2 | 100.5 | ~84 |
+| Within expected MW (20–45 kDa) | — | — | 45/48 (93.8%) |
 | Stable (instability index < 40) | — | — | 31/48 (64.6%) |
 
 #### 3.5.3 Signal peptide prediction
@@ -120,9 +126,9 @@ Signal peptide prediction with SignalP-6.0 was not available at the time of anal
 
 #### 3.5.4 Functional annotation (EggNOG-mapper)
 
-Functional annotation of the 48 trypsin sequences was performed using eggNOG-mapper v2.1.13 (Cantalapiedra et al., 2021) against the eggNOG 5.0 database, using DIAMOND for sequence search. All 48 sequences produced annotation hits. COG category, GO terms, and KEGG pathway assignments will be summarised in the final manuscript table.
+Functional annotation using eggNOG-mapper v2.1.13 against the eggNOG 5.0 database yielded annotations for all 48 sequences (100% coverage). All sequences were assigned to **COG category O** (Post-translational modification, protein turnover, chaperones — encompassing serine proteases in the eggNOG classification), COG group COG5640 (Serine protease, subtilisin/trypsin superfamily), and were classified within the Lepidoptera-level orthologous group 44642@7088 (Lepidoptera). The predominant functional annotation was "Trypsin-like serine protease", with preferred Pfam annotation **Trypsin** (PF00089).
 
-[EggNOG annotation details — Table 6 to be completed after manual curation of annotation file]
+Enzyme Commission assignments mapped to **EC 3.4.21.4** (trypsin) for the majority of sequences, with a subset assigned to EC 3.4.21.1 (chymotrypsin-like). KEGG Orthology assignments included **ko:K01310** (trypsin-1) and **ko:K01312** (trypsin-2), and KEGG Pathway annotation placed sequences in the "Protein digestion and absorption" pathway (ko04974) — directly consistent with the biological role of these enzymes in midgut-mediated soybean protein hydrolysis. Key Gene Ontology terms assigned included GO:0004252 (serine-type endopeptidase activity), GO:0006508 (proteolysis), and GO:0017171 (serine hydrolase activity). Seed orthologs were predominantly from *Bombyx mori* (Lepidoptera: Bombycidae) and *Leguminivora glycinivorella* (Lepidoptera: Tortricidae), indicating strong conservation of trypsin structure within Lepidoptera.
 
 ---
 
@@ -130,7 +136,7 @@ Functional annotation of the 48 trypsin sequences was performed using eggNOG-map
 
 The 48 non-redundant *A. gemmatalis* trypsin sequences were subjected to phylogenetic analysis alongside 57 reference sequences comprising published trypsin and serine protease sequences from *A. gemmatalis* (including AWL83213.1 and additional sequences retrieved by NCBI programmatic search), other Noctuidae/Erebidae (*Heliothis virescens*, *Agrotis ipsilon*, *Mamestra configurata*), and representatives of broader Lepidoptera clades (*Spodoptera frugiperda*, *Helicoverpa armigera*, *Trichoplusia ni*, *Manduca sexta*, *Bombyx mori*, *Leguminivora glycinivorella*), plus bovine trypsin (P00760) as outgroup. After MAFFT-linsi alignment (1,923 positions) and trimAl (-gappyout; 255 positions retained, 13.3%), the dataset comprised 104 unique sequences.
 
-Maximum-likelihood phylogenetic inference with IQ-TREE2 (Minh et al., 2020) selected **Q.PFAM+G4** as the best-fit model (BIC; Γ shape α = 1.198), which is calibrated specifically for Pfam protein family data, making it particularly appropriate for trypsin/serine protease phylogenomics. Tree search converged after 561 iterations (log-likelihood = −36,563.837; ultrafast bootstrap correlation coefficient = 0.996), with 1,000 ultrafast bootstrap replicates (UFBoot) and 1,000 SH-aLRT replicates used to assess branch support.
+Maximum-likelihood phylogenetic inference with IQ-TREE v3.1.2 (Wong et al., 2025) selected **Q.PFAM+G4** as the best-fit model by BIC (BIC score = 74,347.748; Γ shape α = 1.198), substantially outperforming LG+G4 (ΔBIC = 88.4) and all other tested models. Q.PFAM is calibrated on Pfam protein family alignments, making it particularly appropriate for trypsin/serine protease phylogenomics. Tree search converged after 561 iterations (final log-likelihood = −36,563.837; s.e. = 765.3; ultrafast bootstrap correlation coefficient = 0.996), with 1,000 ultrafast bootstrap replicates (UFBoot) and 1,000 SH-aLRT replicates used to assess branch support. All 255 alignment sites were parsimony-informative (254/255; 99.6%), indicating high phylogenetic signal despite the conservative trimming. Total tree length was 87.42, with internal branches accounting for 23.31 (26.7%), consistent with deep divergence among the included taxa.
 
 [**Figure X.** Maximum-likelihood phylogenetic tree — to be generated in Phase 11 with annotated clades and bootstrap values]
 

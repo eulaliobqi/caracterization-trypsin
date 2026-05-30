@@ -88,7 +88,7 @@ Sequences were combined (48 *A. gemmatalis* + 57 references = 105 total; 1 ident
 
 #### 2.7.3 Phylogenetic inference
 
-Maximum-likelihood trees were inferred with IQ-TREE2 v2.2+ (Minh et al., 2020) using automatic model selection via ModelFinder (Kalyaanamoorthy et al., 2017). The best-fit substitution model (selected by BIC) was **Q.PFAM+G4** (Γ shape α = 1.198), calibrated for Pfam protein family data. Branch support was assessed with 1,000 ultrafast bootstrap replicates (`-B 1000`) and 1,000 SH-aLRT replicates (`-alrt 1000`). Branches with UFBoot ≥ 95% and SH-aLRT ≥ 80% were considered strongly supported.
+Maximum-likelihood trees were inferred with IQ-TREE v3.1.2 (Wong et al., 2025) using automatic model selection via ModelFinder (Kalyaanamoorthy et al., 2017). The best-fit substitution model (selected by BIC) was **Q.PFAM+G4** (Γ shape α = 1.198), calibrated for Pfam protein family data. Branch support was assessed with 1,000 ultrafast bootstrap replicates (`-B 1000`) and 1,000 SH-aLRT replicates (`-alrt 1000`). Branches with UFBoot ≥ 95% and SH-aLRT ≥ 80% were considered strongly supported.
 
 <!-- PHASE 7 — Structure: AlphaFold3 via nf-core/proteinfold (to fill) -->
 <!-- PHASE 8 — Structural validation: MolProbity + ProSA + Foldseek + ConSurf (to fill) -->
