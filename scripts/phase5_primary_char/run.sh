@@ -169,9 +169,12 @@ for rec in SeqIO.parse(fasta, "fasta"):
         ii  = pa.instability_index()
         gv  = pa.gravy()
         ai  = pa.aromaticity()
-        aa_comp = pa.get_amino_acids_percent()
-        aliphatic = (aa_comp.get('A',0) + 2.9 * aa_comp.get('V',0) +
-                     3.9 * (aa_comp.get('I',0) + aa_comp.get('L',0))) * 100
+        # get_amino_acids_percent() removido no Biopython ≥1.80
+        aa_count = pa.count_amino_acids()
+        n = len(seq) or 1
+        aa_pct = {a: c / n for a, c in aa_count.items()}
+        aliphatic = (aa_pct.get('A',0) + 2.9 * aa_pct.get('V',0) +
+                     3.9 * (aa_pct.get('I',0) + aa_pct.get('L',0))) * 100
         rows.append({
             "id":               rec.id,
             "length_aa":        len(seq),
