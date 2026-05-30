@@ -37,8 +37,14 @@ exec > >(tee -a "$LOG") 2>&1
 
 check_file "$CONFIDENT" "trypsins_confident.fasta (Fase 3)" || exit 1
 
-N_CONF=$(grep -c "^>" "$CONFIDENT")
+N_CONF=$(grep -c "^>" "$CONFIDENT" || echo 0)
 echo "Confident da Fase 3: $N_CONF sequências"
+
+if [ "$N_CONF" -eq 0 ]; then
+    echo "❌ trypsins_confident.fasta está vazio."
+    echo "   Re-rode a Fase 3: rm results/phase3/hmmer_trypsin_ids.txt && bash scripts/phase3_trypsin_id/run.sh"
+    exit 1
+fi
 echo ""
 
 # ── Filtro principal ──────────────────────────────────────────────────────────
