@@ -31,44 +31,53 @@ except ImportError:
     print("ERRO: Biopython necessário. Rode: mamba run -n analysis pip install biopython")
     sys.exit(1)
 
-# Motivos conservados em tripsinas ativas (numeração quimotripsina)
-# GDSGG = [G][D][S][G][G] — marca Ser195 do sítio ativo
-# HISTIDINE_MOTIF = posição His57 — mais variável
-SERINE_MOTIF = re.compile(r"GDS[AG]G")  # Ser195 site (PF00089 core)
-ALT_SERINE   = re.compile(r"[GA]DS[GA]G")  # variante menos conservada
+# Motivos ao redor de Ser195 (numeração quimotripsina) — do mais ao menos conservado
+# Nível 1 — canônico:    GDS[AG]G  (Ser195 intacto)
+# Nível 2 — alt:         [GA]DS[GASTVNC]G  (variação nos flancos, Ser conservado)
+# Nível 3 — mutante:     GD[^SP]GG ou [GA]D[^SP][GA]G  (Ser195 substituído,
+#                         contexto GDXGG preservado — enzima provavelmente inativa
+#                         mas relevante para análise evolutiva)
+SERINE_MOTIF  = re.compile(r"GDS[AG]G")                    # canônico
+ALT_SERINE    = re.compile(r"[GA]DS[GASTVNC]G")            # alt conservado
+MUTANT_SER195 = re.compile(r"GD[ACTVNILMF]GG|[GA]D[ACTVNILMF][GA]G")  # Ser195 mutado
 
 
 def check_completeness(seq_str, seq_id, min_len=220):
     """Verifica critérios de completude de uma tripsina candidata."""
     seq = seq_str.replace("*", "").replace("-", "").upper()
 
+    has_canonical = bool(SERINE_MOTIF.search(seq))
+    has_alt       = bool(ALT_SERINE.search(seq))
+    has_mutant    = bool(MUTANT_SER195.search(seq)) and not (has_canonical or has_alt)
+
+    # Localizar motivo (prioridade: canônico > alt > mutante)
+    m = SERINE_MOTIF.search(seq) or ALT_SERINE.search(seq) or MUTANT_SER195.search(seq)
+
     result = {
-        "id":           seq_id,
-        "length":       len(seq),
-        "met_start":    seq.startswith("M"),
-        "len_ok":       len(seq) >= min_len,
-        "gdsgg_motif":  bool(SERINE_MOTIF.search(seq)),
-        "alt_motif":    bool(ALT_SERINE.search(seq)),
-        "motif_pos":    None,
-        "pass_strict":  False,
+        "id":             seq_id,
+        "length":         len(seq),
+        "met_start":      seq.startswith("M"),
+        "len_ok":         len(seq) >= min_len,
+        "gdsgg_motif":    has_canonical,
+        "alt_motif":      has_alt,
+        "mutant_ser195":  has_mutant,   # Ser195 possivelmente mutado
+        "motif_pos":      m.start() if m else None,
+        "motif_seq":      m.group() if m else None,
+        "pass_strict":    False,
+        "pass_mutant":    False,
         "pass_borderline": False,
     }
 
-    # Localizar motivo
-    m = SERINE_MOTIF.search(seq) or ALT_SERINE.search(seq)
-    if m:
-        result["motif_pos"] = m.start()
-        result["motif_seq"] = m.group()
+    base = result["met_start"] and result["len_ok"]
 
-    # Critério strict: Met + comprimento + motivo GDSGG
-    result["pass_strict"] = (
-        result["met_start"] and
-        result["len_ok"] and
-        (result["gdsgg_motif"] or result["alt_motif"])
-    )
+    # Strict: Met + comprimento + Ser195 intacto (canônico ou alt)
+    result["pass_strict"] = base and (has_canonical or has_alt)
 
-    # Borderline: Met + comprimento (sem motivo — pode estar em ORF parcial)
-    result["pass_borderline"] = result["met_start"] and result["len_ok"]
+    # Mutant: Met + comprimento + contexto GDXGG mas Ser195 substituído
+    result["pass_mutant"] = base and has_mutant
+
+    # Borderline: Met + comprimento mas sem nenhum motivo
+    result["pass_borderline"] = base and not (has_canonical or has_alt or has_mutant)
 
     return result
 
@@ -166,6 +175,7 @@ def main():
             print(f"Incluindo suggestive: {suggest}")
 
     all_strict     = []
+    all_mutant     = []   # Ser195 possivelmente mutado
     all_borderline = []
     all_report     = []
 
@@ -180,31 +190,37 @@ def main():
 
             if res["pass_strict"]:
                 all_strict.append(rec)
+            elif res["pass_mutant"]:
+                all_mutant.append(rec)
             elif res["pass_borderline"]:
                 all_borderline.append(rec)
 
             all_report.append(res)
 
     # ── Estatísticas ───────────────────────────────────────────────────────
-    n_input    = len(all_report)
-    n_strict   = len(all_strict)
+    n_input      = len(all_report)
+    n_strict     = len(all_strict)
+    n_mutant     = len(all_mutant)
     n_borderline = len(all_borderline)
-    n_fail     = n_input - n_strict - n_borderline
+    n_fail       = n_input - n_strict - n_mutant - n_borderline
 
     print(f"\n── Resultados ────────────────────────────────────")
-    print(f"  Sequências analisadas:         {n_input:>6}")
-    print(f"  Completas (strict):            {n_strict:>6}  ← usar para modelagem")
-    print(f"  Borderline (sem motivo GDSGG): {n_borderline:>6}  ← investigar manualmente")
-    print(f"  Rejeitadas:                    {n_fail:>6}")
+    print(f"  Sequências analisadas:              {n_input:>6}")
+    print(f"  Completas (Ser195 intacto):         {n_strict:>6}  ← usar para modelagem")
+    print(f"  Possível mutação Ser195 (GDXGG):    {n_mutant:>6}  ← análise evolutiva")
+    print(f"  Borderline (sem motivo ao redor):   {n_borderline:>6}  ← investigar manualmente")
+    print(f"  Rejeitadas (sem Met ou curtas):     {n_fail:>6}")
 
     # Por critério
     n_met = sum(1 for r in all_report if r["met_start"])
     n_len = sum(1 for r in all_report if r["len_ok"])
     n_mot = sum(1 for r in all_report if r["gdsgg_motif"] or r["alt_motif"])
+    n_mut = sum(1 for r in all_report if r["mutant_ser195"])
     print(f"\n  Por critério:")
-    print(f"    Met inicial:      {n_met:>4}/{n_input}")
-    print(f"    ≥ {args.min_len} aa:         {n_len:>4}/{n_input}")
-    print(f"    Motivo GDSGG:     {n_mot:>4}/{n_input}")
+    print(f"    Met inicial:               {n_met:>4}/{n_input}")
+    print(f"    ≥ {args.min_len} aa:                  {n_len:>4}/{n_input}")
+    print(f"    Motivo GDSGG (canônico):   {n_mot:>4}/{n_input}")
+    print(f"    Motivo GDXGG (Ser mutado): {n_mut:>4}/{n_input}")
 
     # Comprimento médio dos completos
     if all_strict:
@@ -241,28 +257,32 @@ def main():
         final_trypsins = all_strict
 
     SeqIO.write(final_trypsins, str(out_dir / "complete_trypsins.fasta"), "fasta")
+    SeqIO.write(all_mutant,     str(out_dir / "mutant_ser195_trypsins.fasta"), "fasta")
     SeqIO.write(all_borderline, str(out_dir / "borderline_trypsins.fasta"), "fasta")
 
     # ── Relatório TSV ──────────────────────────────────────────────────────
     report_path = out_dir / "completeness_report.tsv"
     with open(report_path, "w") as f:
         f.write("id\tsource\tlength\tmet_start\tlen_ok\tgdsgg_motif\talt_motif\t"
-                "motif_pos\tpass_strict\tpass_borderline\ttriad_ok\n")
+                "mutant_ser195\tmotif_seq\tmotif_pos\tpass_strict\tpass_mutant\t"
+                "pass_borderline\ttriad_ok\n")
         for r in all_report:
             triad = triad_results.get(r["id"], "NA")
             f.write("\t".join([
                 r["id"], r.get("source","?"),
                 str(r["length"]), str(r["met_start"]),
                 str(r["len_ok"]), str(r["gdsgg_motif"]),
-                str(r["alt_motif"]), str(r.get("motif_pos","NA")),
-                str(r["pass_strict"]), str(r["pass_borderline"]),
-                str(triad),
+                str(r["alt_motif"]), str(r.get("mutant_ser195", False)),
+                str(r.get("motif_seq","NA")), str(r.get("motif_pos","NA")),
+                str(r["pass_strict"]), str(r.get("pass_mutant", False)),
+                str(r["pass_borderline"]), str(triad),
             ]) + "\n")
 
     n_final = len(final_trypsins)
     print(f"\n── Arquivos de output ────────────────────────────")
-    print(f"  complete_trypsins.fasta:  {n_final} sequências")
-    print(f"  borderline_trypsins.fasta: {n_borderline} sequências")
+    print(f"  complete_trypsins.fasta:       {n_final} sequências")
+    print(f"  mutant_ser195_trypsins.fasta:  {n_mutant} sequências")
+    print(f"  borderline_trypsins.fasta:     {n_borderline} sequências")
     print(f"  completeness_report.tsv")
 
     # ── Aviso biológico ────────────────────────────────────────────────────
