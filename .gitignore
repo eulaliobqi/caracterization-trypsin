@@ -8,11 +8,16 @@ report.html
 trace.txt
 dag.svg
 
-# Large data files
+# Large data files (não versionar — copie manualmente para o servidor)
 data/raw/*.fasta
 data/raw/*.fa
+data/raw/*.fastq
+data/raw/*.fastq.gz
 data/references/
 data/intermediate/
+
+# Duplicata na raiz (use data/raw/trinity_assembly.fasta)
+assembly-anticarsia.fa
 
 # Results (keep structure, not data)
 results/**/*

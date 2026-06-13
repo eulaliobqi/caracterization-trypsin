@@ -5,18 +5,24 @@ channels:
   - defaults
 dependencies:
   - python=3.11
-  - autodock-vina=1.2.5
+  - vina>=1.2.3                    # conda-forge: pacote correto é 'vina', não 'autodock-vina'
   - biopython=1.83
   - pandas=2.2.0
   - numpy=1.26.4
   - scipy=1.13.0
   - openbabel=3.1.1
-  - rdkit=2024.03.5
+  - rdkit>=2023.09                 # 2024.03.5 pode não existir; >=2023.09 é estável
+  - plip>=2.3.0                    # análise de interações proteína-ligante
   - pip
   - pip:
-    # HADDOCK 3: instalar separadamente
-    # git clone https://github.com/haddocking/haddock3
-    # pip install -e haddock3/
-    - haddock3
-    # PLIP para análise de interações protein-ligand
-    - plip>=2.3.0
+    # HADDOCK 3 requer instalação manual do repositório:
+    #   git clone https://github.com/haddocking/haddock3
+    #   cd haddock3 && pip install -e .
+    # NÃO incluído aqui pois não está no PyPI como pacote simples
+    #
+    # meeko depende de openbabel — mas conda já instalou openbabel=3.1.1 com
+    # bindings Python. Instalar com --no-deps evita que pip tente recompilar
+    # openbabel do zero via SWIG (o que falha sem system headers).
+    # Após criar o env, rode:
+    #   pip install meeko>=0.5.0 --no-deps
+    - ProDy>=2.4                   # análise de estruturas + conformações

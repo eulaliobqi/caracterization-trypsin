@@ -1,5 +1,7 @@
-// modules/local/diamond.nf — DIAMOND BLASTp para identificação de tripsinas
-// Inclui processo DIAMOND (ORF hints) e DIAMOND_TRYPSIN (identificação específica)
+// modules/local/diamond.nf — DIAMOND BLASTp
+// Processo 1: DIAMOND para hints de ORF (Fase 2)
+// Processo 2: DIAMOND_TRYPSIN para identificação de candidatos (Fase 3 — somente IDs)
+// Processo 3: INTERSECT_TRYPSINS — interseção DIAMOND ∩ HMMER → FASTAs finais (Fase 3)
 
 process DIAMOND {
     tag        "${meta.id}"
@@ -41,26 +43,24 @@ process DIAMOND {
     """
 }
 
-// DIAMOND específico para identificação de tripsinas na Fase 3
+// ── FASE 3: Passo 1 — apenas DIAMOND, somente lista de IDs candidatos ─────────
 process DIAMOND_TRYPSIN {
     tag        "${meta.id}"
     label      'process_medium'
-    publishDir "${params.outdir}/03_trypsin_ids", mode: params.publish_dir_mode
+    publishDir "${params.outdir}/03_trypsin_ids/diamond", mode: params.publish_dir_mode
     conda      "${projectDir}/../envs/annotation.yml"
 
     input:
     tuple val(meta), path(pep)
 
     output:
-    tuple val(meta), path("trypsins_confident.fasta"),   emit: confident_fasta
-    tuple val(meta), path("trypsins_suggestive.fasta"),  emit: suggestive_fasta
-    tuple val(meta), path("identification_report.tsv"),  emit: report_tsv
-    tuple val(meta), path("trypsin_ids_confident.txt"),  emit: trypsin_ids
-    path "versions.yml",                                  emit: versions
+    tuple val(meta), path("diamond_trypsin_ids.txt"), emit: trypsin_ids
+    tuple val(meta), path("diamond_all.tsv"),         emit: diamond_tsv
+    path "versions.yml",                               emit: versions
 
     script:
     """
-    # 1. DIAMOND BLASTp contra UniProt
+    # 1. DIAMOND BLASTp contra UniProt Swiss-Prot
     diamond blastp \\
         --query ${pep} \\
         --db ${params.uniprot_db} \\
@@ -71,39 +71,81 @@ process DIAMOND_TRYPSIN {
         --threads ${task.cpus} \\
         --out diamond_all.tsv
 
-    # 2. Filtrar hits com "trypsin" no stitle
-    awk -F'\\t' 'tolower(\$3) ~ /trypsin/ {print \$1}' diamond_all.tsv | sort -u \
-        > diamond_trypsin_ids.txt
+    # 2. Filtrar apenas sequências com "trypsin" no título do hit (case-insensitive)
+    awk -F'\\t' 'tolower(\$3) ~ /trypsin/ {print \$1}' diamond_all.tsv \\
+        | sort -u > diamond_trypsin_ids.txt
 
-    echo "DIAMOND trypsin IDs: \$(wc -l < diamond_trypsin_ids.txt)"
+    N=\$(wc -l < diamond_trypsin_ids.txt)
+    echo "DIAMOND candidatos com 'trypsin': \${N}"
 
-    # 3. Interseção com HMMER (os IDs HMMER devem estar disponíveis via join)
-    # Este script também faz a interseção se o arquivo hmm_ids.txt existir
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        diamond: \$(diamond --version 2>&1 | awk '{print \$3}')
+    END_VERSIONS
+    """
+
+    stub:
+    """
+    echo "TRINITY_DN1_c0_g1_i1" > diamond_trypsin_ids.txt
+    touch diamond_all.tsv
+    touch versions.yml
+    """
+}
+
+// ── FASE 3: Passo 3 — Interseção real DIAMOND ∩ HMMER (PF00089) ──────────────
+// Recebe: pep + diamond_trypsin_ids.txt + trypsin_hmm_ids.txt
+// Produz: trypsins_confident.fasta (ambos) + trypsins_suggestive.fasta (um só)
+process INTERSECT_TRYPSINS {
+    tag        "${meta.id}"
+    label      'process_low'
+    publishDir "${params.outdir}/03_trypsin_ids", mode: params.publish_dir_mode
+    conda      "${projectDir}/../envs/annotation.yml"
+
+    input:
+    tuple val(meta), path(pep), path(diamond_ids), path(hmm_ids)
+
+    output:
+    tuple val(meta), path("trypsins_confident.fasta"),   emit: confident_fasta
+    tuple val(meta), path("trypsins_suggestive.fasta"),  emit: suggestive_fasta
+    tuple val(meta), path("identification_report.tsv"),  emit: report_tsv
+    tuple val(meta), path("trypsin_ids_confident.txt"),  emit: trypsin_ids
+    path "versions.yml",                                  emit: versions
+
+    script:
+    """
+    # Interseção DIAMOND ∩ HMMER via script Python
+    # confident = presente nos DOIS métodos (alta especificidade)
+    # suggestive = presente em apenas UM método (requer revisão manual)
     python3 ${projectDir}/bin/filter_complete_trypsins.py \\
-        --diamond diamond_trypsin_ids.txt \\
+        --diamond ${diamond_ids} \\
+        --hmm_ids ${hmm_ids} \\
         --pep ${pep} \\
         --output_confident trypsins_confident.fasta \\
         --output_suggestive trypsins_suggestive.fasta \\
         --report identification_report.tsv \\
         --ids_confident trypsin_ids_confident.txt
 
-    echo "Confident trypsins: \$(grep -c '>' trypsins_confident.fasta)"
-    echo "Suggestive trypsins: \$(grep -c '>' trypsins_suggestive.fasta)"
+    N_CONF=\$(grep -c '>' trypsins_confident.fasta  2>/dev/null || echo 0)
+    N_SUGG=\$(grep -c '>' trypsins_suggestive.fasta 2>/dev/null || echo 0)
+    echo "=== Interseção DIAMOND ∩ HMMER ==="
+    echo "  Confident (ambos):   \${N_CONF}"
+    echo "  Suggestive (um só):  \${N_SUGG}"
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        diamond: \$(diamond --version 2>&1 | awk '{print \$3}')
         python: \$(python3 --version 2>&1 | awk '{print \$2}')
+        biopython: \$(python3 -c "import Bio; print(Bio.__version__)")
     END_VERSIONS
     """
 
     stub:
     """
-    echo ">TRINITY_DN1_trypsin_stub" > trypsins_confident.fasta
-    echo "MAALGAVLLLCVLPALAARRGIPYSDGICSEVMPVKGRGKTFLVDDLCRSVAFLCGASITDVPDAMTQQIKAGKGLDEALITQNPYEGPVSEAQDLLQKLFGNASVNRFPSQARLSSQPLFIYVAGKLSSGNCATGKPIEVIDFRQKLATFHQTAAKNFFLPLGEVALQLNSTMSKVSATFGPQVSLASKLKQYAVLKPSYFNTTHSDSYTIQLTPNQFYAAASIEQGAQNIASGQNQVNQHLFPQFLDKSIRR" >> trypsins_confident.fasta
+    echo ">TRINITY_DN1_c0_g1_i1_confident_stub" > trypsins_confident.fasta
+    printf 'MAALGAVLLLCVLPALAARRGIPYSDGICSEVMPVKGRGKTFLVDDLCRSVAFLCGASITDVPDAMTQQIKAGKGLDEALITQNPYEGPVSEAQDLLQKLFGNASVNRFPSQARLSSQPLFIYVAGKLSSGNCATGKPIEVIDFRQK\\n' >> trypsins_confident.fasta
     touch trypsins_suggestive.fasta
-    echo -e "id\tdiamond_hit\thmm_hit\tconfident" > identification_report.tsv
-    echo "TRINITY_DN1_trypsin_stub" > trypsin_ids_confident.txt
+    printf 'id\tdiamond_hit\thmm_hit\tconfident\n' > identification_report.tsv
+    printf 'TRINITY_DN1_c0_g1_i1\ttrue\ttrue\ttrue\n' >> identification_report.tsv
+    echo "TRINITY_DN1_c0_g1_i1" > trypsin_ids_confident.txt
     touch versions.yml
     """
 }

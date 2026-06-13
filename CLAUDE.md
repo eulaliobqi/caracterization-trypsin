@@ -1,10 +1,11 @@
 # Projeto: Tripsinas A. gemmatalis — Caracterização Estrutural
 
 ## Estado atual
-- Fase atual: **SCAFFOLD CRIADO** — Sessão 1 concluída (2026-05-25)
-- Último commit: (aguardando)
+- Fase atual: **SESSÃO 2 INICIADA** — Bugs corrigidos, skills completas (2026-05-25)
+- Último commit: feat(session-2): fix HMMER intersection bug + 5 missing skills + README
+- Branch ativa: `dev` — GitHub: https://github.com/eulaliobqi/caracterization-trypsin
 - Assembly: `data/raw/trinity_assembly.fasta` (42.372 transcritos TRINITY)
-- Bloqueios: nenhum
+- Bloqueios: nenhum — próximo passo: stub-run de validação no servidor Debian
 
 ## Contexto biológico
 - Organismo: *Anticarsia gemmatalis* Hübner 1818 (Lepidoptera: Erebidae)

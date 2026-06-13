@@ -1,17 +1,19 @@
 name: annotation
+# Ambiente para Fase 5 — caracterização primária das tripsinas
 channels:
-  - conda-forge
   - bioconda
+  - conda-forge
   - defaults
 dependencies:
   - python=3.11
-  - diamond=2.1.9
-  - hmmer=3.4
-  - biopython=1.83
-  - pandas=2.2.0
-  - numpy=1.26.4
-  - seqkit=2.8.2
-  # InterProScan: instalar separadamente (não disponível no bioconda)
-  # Download: https://ftp.ebi.ac.uk/pub/software/unix/iprscan/5/
-  # SignalP 6: instalar via pip após obter licença acadêmica
-  # pip install signalp6
+  - cd-hit>=4.8          # clustering proteico (≥90% aa)
+  - diamond>=2.1
+  - hmmer>=3.3
+  - biopython>=1.83
+  - pandas>=2.2
+  - numpy>=1.26
+  - eggnog-mapper>=2.1   # anotação funcional (usa /databases/eggnog/)
+  - seqkit>=2.8
+  # SignalP-6.0: instalar via pip após licença acadêmica
+  #   pip install signalp-6.0h.fast/  (após download do DTU)
+  # InterProScan: opcional, pesado (~12 GB) — usar EggNOG como alternativa

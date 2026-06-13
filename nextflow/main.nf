@@ -68,12 +68,9 @@ def helpMsg() {
     """.stripIndent()
 }
 
-if (params.help) {
-    helpMsg()
-    exit 0
-}
-
 // ── Validação de inputs ───────────────────────────────────────────────────
+// Nextflow 26.x: statements soltos (if, chamadas de função) fora de
+// workflow/process/function são inválidos — movidos para dentro do workflow.
 def validateParams() {
     // Verificar FASTA de input
     if (!file(params.input_fasta).exists()) {
@@ -87,10 +84,16 @@ def validateParams() {
         log.warn "   Baixe e crie com: diamond makedb --in uniprot_sprot.fasta -d uniprot_sprot"
     }
 }
-validateParams()
 
 // ── Workflow principal ────────────────────────────────────────────────────
 workflow {
+
+    // Nextflow 26.x: help e validação dentro do workflow
+    if (params.help) {
+        helpMsg()
+        exit 0
+    }
+    validateParams()
 
     // Log de início
     log.info """
@@ -183,27 +186,29 @@ workflow {
             MD_SIMULATION.out
         )
     }
-}
 
-// ── Handlers de eventos ───────────────────────────────────────────────────
-workflow.onComplete {
-    def status = workflow.success ? '✅ SUCCESS' : '❌ FAILED'
-    log.info """
-    ══════════════════════════════════════════════════
-    Pipeline finalizado: ${status}
-    Duração total:  ${workflow.duration}
-    Output em:      ${params.outdir}
-    CPU hours:      ${workflow.stats.computeTimeFmt ?: 'N/A'}
-    ══════════════════════════════════════════════════
-    """.stripIndent()
+    // ── Handlers de eventos ───────────────────────────────────────────────
+    // Nextflow 26.x: workflow.onComplete e workflow.onError são statements
+    // e não podem ficar no nível do script — devem ficar dentro do workflow {}
+    workflow.onComplete {
+        def status = workflow.success ? '✅ SUCCESS' : '❌ FAILED'
+        log.info """
+        ══════════════════════════════════════════════════
+        Pipeline finalizado: ${status}
+        Duração total:  ${workflow.duration}
+        Output em:      ${params.outdir}
+        CPU hours:      ${workflow.stats.computeTimeFmt ?: 'N/A'}
+        ══════════════════════════════════════════════════
+        """.stripIndent()
 
-    if (!workflow.success) {
-        log.error "Verifique .nextflow.log e work/ para detalhes do erro"
-        log.error "Consulte LEARNINGS.md para erros conhecidos"
+        if (!workflow.success) {
+            log.error "Verifique .nextflow.log e work/ para detalhes do erro"
+            log.error "Consulte LEARNINGS.md para erros conhecidos"
+        }
     }
-}
 
-workflow.onError {
-    log.error "Pipeline ERRO: ${workflow.errorMessage}"
-    log.error "Processo com falha: ${workflow.errorReport}"
+    workflow.onError {
+        log.error "Pipeline ERRO: ${workflow.errorMessage}"
+        log.error "Processo com falha: ${workflow.errorReport}"
+    }
 }

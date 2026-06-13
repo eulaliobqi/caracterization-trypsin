@@ -1,0 +1,39 @@
+# Introduction
+> Draft — updated progressively. Target journals: Int J Biol Macromol (IF ~8), Insect Biochem Mol Biol (IF ~4), Comput Struct Biotechnol J (IF ~6)
+> Last update: 2026-05-28
+
+---
+
+## 1. Introduction
+
+Soybean (*Glycine max* L. Merrill) represents one of the most economically significant crops worldwide, with global production exceeding 370 million metric tons annually [FAO, 2024]. In Brazil, the world's leading soybean producer, crop losses attributable to lepidopteran pests constitute a major constraint on agricultural productivity. Among these, the velvetbean caterpillar *Anticarsia gemmatalis* Hübner, 1818 (Lepidoptera: Erebidae) is historically one of the most devastating defoliators of soybean in South America, capable of causing complete defoliation when population densities are uncontrolled [Brioschi et al., 2007; Panizzi & Slansky, 1985].
+
+The larval digestive system of *A. gemmatalis* exhibits a highly alkaline midgut environment (pH 10–11), a physiological trait characteristic of many lepidopteran species that facilitates the solubilization of plant leaf proteins [Terra & Ferreira, 1994]. Within this alkaline milieu, serine endopeptidases of the trypsin family (EC 3.4.21.4; MEROPS family S1A) constitute the principal digestive enzymes responsible for the hydrolysis of dietary proteins [Brito et al., 2001; Boigegrain et al., 1992]. Insect trypsins are structurally homologous to vertebrate counterparts but harbour key adaptations — including altered surface charge distributions and active-site residue configurations — that confer activity under alkaline conditions and resistance to specific plant-derived inhibitors [Volpicella et al., 2003].
+
+Plants have evolved a diverse arsenal of protease inhibitors (PIs) as a primary line of defence against herbivorous insects. In soybean, the Kunitz-type soybean trypsin inhibitor (SKTI; encoded by *KTi3*) and Bowman-Birk inhibitor (BBI) are the most abundant and well-characterised antinutritional factors [Liener & Kakade, 1980; Birk, 1985]. SKTI competitively inhibits insect midgut trypsins through direct interaction with the catalytic triad residues (His57–Asp102–Ser195, chymotrypsinogen numbering), reducing dietary protein digestion efficiency and larval growth rates [Brito et al., 2001; Macedo et al., 2010]. The evolutionary response of *A. gemmatalis* and related Lepidoptera to SKTI exposure involves the upregulation or diversification of SKTI-insensitive trypsin isoforms — a coevolutionary dynamic that has broad implications for the development of PI-based crop resistance strategies [Jongsma & Bolter, 1997; Brito et al., 2001; Brioschi et al., 2007].
+
+Despite its agricultural importance, the trypsin complement of *A. gemmatalis* has been characterised primarily at the biochemical level, with limited molecular and structural information available. Previous studies identified multiple trypsin-like activities in larval midgut extracts [Brito et al., 2001; Brioschi et al., 2007] and demonstrated differential inhibition by SKTI and BPTI-derived peptides, suggesting the existence of structurally distinct isoforms. However, the complete repertoire of trypsin-encoding transcripts, the three-dimensional structures of their gene products, and the atomic-level determinants of inhibitor selectivity remain poorly understood. This knowledge gap limits the rational exploitation of PI-insect trypsin interactions for crop improvement.
+
+Recent advances in transcriptomics and structural bioinformatics provide unprecedented tools to address these questions. *De novo* transcriptome assembly from RNA-Seq data, coupled with robust open reading frame (ORF) prediction pipelines, enables the comprehensive cataloguing of a species' protein-coding repertoire without prior genomic resources [Grabherr et al., 2011]. Concurrently, AlphaFold3 — the latest iteration of DeepMind's structure prediction system — achieves near-experimental accuracy for protein structure prediction and, critically, extends to protein–ligand complexes, enabling the modelling of trypsin–inhibitor interactions at atomic resolution [Abramson et al., 2024]. Complementary approaches, including molecular docking with AutoDock Vina [Trott & Olson, 2010] and HADDOCK [van Zundert et al., 2016], along with microsecond-scale molecular dynamics (MD) simulations, allow quantitative characterisation of binding thermodynamics and dynamic properties of these complexes [Souza et al., 2024].
+
+In this study, we present the first comprehensive structural characterisation of the trypsin repertoire of *A. gemmatalis* larval midgut. Using a multi-stage bioinformatics pipeline applied to a high-quality *de novo* transcriptome assembly, we (i) identified and curated full-length trypsin-encoding transcripts; (ii) characterised their primary biochemical properties, phylogenetic relationships, and signal peptide architectures; (iii) predicted three-dimensional structures using AlphaFold3; and (iv) characterised the binding mode and energetics of SKTI and BPTI-like peptide interactions through integrative docking and MD simulations. Our results provide molecular-level insights into the structural basis of trypsin diversity and inhibitor selectivity in a major agricultural pest, with implications for the design of next-generation PI-based pest management strategies.
+
+---
+
+## References (partial — to be completed)
+
+- Abramson J et al. (2024) Accurate structure prediction of biomolecular interactions with AlphaFold 3. *Nature* 630:493–500.
+- Birk Y (1985) The Bowman-Birk inhibitor. Trypsin- and chymotrypsin-inhibitor from soybeans. *Int J Pept Protein Res* 25:113–131.
+- Boigegrain RA et al. (1992) Involvement of a serine residue of insect digestive trypsins in activity toward basic amino acid esters. *Arch Insect Biochem Physiol* 19:247–258.
+- Brito LO et al. (2001) Interaction between *Anticarsia gemmatalis* (Lepidoptera: Noctuidae) and soybean (*Glycine max*) trypsin inhibitor. *J Insect Physiol* 47:1279–1287.
+- Brioschi D et al. (2007) Soybean proteinase inhibitors affect Spodoptera frugiperda (Lepidoptera: Noctuidae) development and digestive trypsin activity. *Insect Biochem Mol Biol* 37:1255–1263.
+- Grabherr MG et al. (2011) Full-length transcriptome assembly from RNA-Seq data without a reference genome. *Nat Biotechnol* 29:644–652.
+- Jongsma MA, Bolter C (1997) The adaptation of insects to plant protease inhibitors. *J Insect Physiol* 43:885–895.
+- Liener IE, Kakade ML (1980) Protease inhibitors. In: Liener IE (ed) *Toxic Constituents of Plant Foodstuffs*. Academic Press, New York.
+- Macedo MLR et al. (2010) Adenanthera pavonina trypsin inhibitor retards growth of *Stegobium paniceum* (Coleoptera) and is detrimental to *Callosobruchus maculatus* (Coleoptera) and *Spodoptera frugiperda* (Lepidoptera). *J Agric Food Chem* 58:2799–2806.
+- Panizzi AR, Slansky F Jr (1985) Review of phytophagous pentatomids (Hemiptera: Pentatomidae) associated with soybean in the Americas. *Fla Entomol* 68:184–214.
+- Souza PFN et al. (2024) Molecular dynamics simulations of trypsin–inhibitor complexes in *Spodoptera frugiperda*. *Int J Biol Macromol* [volume/pages to be confirmed].
+- Terra WR, Ferreira C (1994) Insect digestive enzymes: properties, compartmentalization and function. *Comp Biochem Physiol B* 109:1–62.
+- Trott O, Olson AJ (2010) AutoDock Vina: improving the speed and accuracy of docking with a new scoring function, efficient optimization, and multithreading. *J Comput Chem* 31:455–461.
+- van Zundert GCP et al. (2016) The HADDOCK2.2 Web Server: user-friendly integrative modeling of biomolecular complexes. *J Mol Biol* 428:720–725.
+- Volpicella M et al. (2003) Properties and structure of digestive serine proteinases from *Helicoverpa zea* and *H. armigera*. *Eur J Biochem* 270:10–19.

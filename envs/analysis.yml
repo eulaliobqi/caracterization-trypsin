@@ -11,8 +11,10 @@ dependencies:
   - numpy=1.26.4
   - scipy=1.13.0
   - biopython=1.83
-  - pymol-open-source=3.0.0
-  - jupyter=1.0.0
-  - ipykernel=6.29.3
-  - plotly=5.20.0
-  - kaleido=0.2.1  # para exportar plotly como SVG/PDF
+  - pymol-open-source>=2.6        # 3.0.0 pode não estar disponível; >=2.6 é estável
+  - jupyterlab>=4.0                # metapackage 'jupyter=1.0.0' tem conflitos; jupyterlab é mais estável
+  - ipykernel>=6.20
+  - plotly>=5.18                   # 5.20.0 pode não existir no canal; >=5.18 resolve
+  - pip
+  - pip:
+    - kaleido>=0.2.1               # exporta plotly como SVG/PDF/PNG; pip tem versão mais recente
